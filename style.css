@@ -1,0 +1,22 @@
+
+#container {
+position: absolute;
+border: 1px solid black;
+width: 1000px;
+left: 50%;
+margin-left: -500px;
+}
+
+#canvas {
+position: relative;
+border: 1px solid black;
+height: 400px;
+width: 700px;
+}
+
+#tools {
+position: relative;
+border: 1px solid black;
+height: 40px;
+width: 100%;
+}
