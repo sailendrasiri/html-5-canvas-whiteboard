@@ -5,13 +5,11 @@
         <title>HTML 5 Whiteboard</title>
         <link rel="stylesheet" type="text/css" href="reset.css" />
         <link rel="stylesheet" type="text/css" href="style.css" />
-        <script src="jquery-1.4.2.min.js" type="text/javascript"></script>
-        <script src="whiteboard.js" type="text/javascript"></script>
     </head>
-    <body onload="init()">
+    <body>
     <div id="container">
         <div id="tools">
-            <button type="button" id="polyline" onmousedown="drawPolyline()">polyline</button>
+            <button type="button" id="drawpolyline" onmousedown="drawPolyline()">polyline</button>
             <button type="button">choose color</button>
             <button type="button">rubber</button>
             <button type="button">transform</button>
@@ -23,6 +21,8 @@
         </div> <!-- tools -->
         <canvas id="canvas"></canvas>
     </div> <!-- container -->
+    <script src="jquery-1.4.2.min.js" type="application/javascript"></script>
+    <script src="whiteboard.js" type="application/javascript"></script>
     </body>
 </html>
 
