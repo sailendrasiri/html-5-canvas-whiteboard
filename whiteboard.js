@@ -1,6 +1,8 @@
 
 
 var canvas = document.getElementById("canvas");
+canvas.width = 700;
+canvas.height = 400;
 console.log(canvas);
 var context = canvas.getContext('2d');
 
@@ -9,6 +11,23 @@ context.lineWidth = 5;
 context.lineCap = "round";
 
 
+/*
+Help function to get the x coordinate inside canvas
+counted from the left 
+*/
+function getX(event) {
+    console.log("get x coordinate");
+    return (event.clientX - $("#canvas").offset().left);
+}
+/*
+Help function to get the y coordinate inside canvas
+counted from the top 
+*/
+function getY(event) {
+    console.log("get y coordinate");
+    return (event.clientY - $("#canvas").offset().top);
+}
+
 
 /*
 This function adds a point to the polyline 
@@ -16,7 +35,7 @@ that is beeing drawn
 */
 function addPointToPolyline(event) {
     console.log("add point to path");
-    context.lineTo(event.layerX,event.layerY);
+    context.lineTo(getX(event),getY(event));
     context.stroke();
 }
 
@@ -35,7 +54,7 @@ is chosen.
 */
 function beginPolylineDraw(event) {
     console.log("begin polyline draw");
-    context.moveTo(event.layerX,event.layerY);
+    context.moveTo(getX(event),getY(event));
     $("#canvas").bind("mousemove", addPointToPolyline);
     $("#canvas").bind("mouseup", endPolylineDraw);
     $("#canvas").bind("mouseout", endPolylineDraw);
