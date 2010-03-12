@@ -16,7 +16,6 @@ Help function to get the x coordinate inside canvas
 counted from the left 
 */
 function getX(event) {
-    console.log("get x coordinate");
     return (event.clientX - $("#canvas").offset().left);
 }
 /*
@@ -24,7 +23,6 @@ Help function to get the y coordinate inside canvas
 counted from the top 
 */
 function getY(event) {
-    console.log("get y coordinate");
     return (event.clientY - $("#canvas").offset().top);
 }
 
@@ -70,8 +68,13 @@ function drawPolyline() {
     $("#canvas").bind("mousedown", beginPolylineDraw);
 }
 
-
-
-
+/*
+set the strokestyle with this function
+*/
+function setStrokeStyle(color) {
+    console.log("set stroke style");
+    console.log(color);
+    context.strokeStyle = color;
+}
 
 
