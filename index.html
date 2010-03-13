@@ -12,7 +12,7 @@
             <button type="button" id="drawpolyline" onmousedown="drawPolyline()">polyline</button>
             <input id="color" type="text" name="color" size="7" value="#000000" maxlength="7" />
             <button type="button" onmousedown="setStrokeStyle(document.getElementById('color').value)">choose color</button>
-            <button type="button">rubber</button>
+            <button type="button" onmousedown="activateEraser(event)">eraser</button>
             <button type="button">transform</button>
             <button type="button">scale</button>
             <button type="button">rotate</button>

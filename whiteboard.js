@@ -77,4 +77,26 @@ function setStrokeStyle(color) {
     context.strokeStyle = color;
 }
 
+//global value to remember the previous color when eraser activated
+var previousStrokeStyle = context.strokeStyle;
+/*
+This function deactivates the eraser
+*/
+function deactivateEraser(event) {
+    console.log("deactivate eraser");
+    context.strokeStyle = previousStrokeStyle;
+    $("#canvas").unbind();
+}
+
+/*
+This function activates the eraser function..
+at the moment it only draw a white line on top
+of the other graphics
+*/
+function activateEraser() {
+    previousStrokeStyle = context.strokesStyle;
+    context.strokeStyle = "#FFFFFF";
+    drawPolyline();
+}
+
 
