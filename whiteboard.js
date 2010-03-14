@@ -14,6 +14,98 @@ context.lineWidth = 5;
 context.lineCap = "round";
 var zoomFactor = 1.0;
 
+/*Model*/
+
+/*
+Event objects
+*/
+
+/*Begin path event*/
+function BeginPath(x,y) {
+    this.coordinates = [x,y];
+    this.type="beginpath";
+}
+/*End path event*/
+function ClosePath() {
+    this.type = "closepath";
+}
+/*Point draw event*/
+function DrawPathToPoint(x, y) {
+    this.type = "drawpathtopoint";
+    this.coordinates = [x, y];
+    this.time = new Date().getTime();
+}
+/*Erase event */
+function Erase(x,y) {
+    this.type = "erase";
+    this.coordinates = [x,y];
+    this.time = new Date().getTime();
+}
+/*Storke style event */
+function StrokeStyle(color) {
+    this.type = "strokestyle";
+    this.color = color;
+    this.time = new Date().getTime();
+}
+/*Zoom event*/
+function Zoom(factor) {
+    this.type = "zoom";
+    this.factor = factor;
+    this.time = new Date().getTime();
+}
+/*Rotate event
+angle in degrees
+*/
+function Rotate(angle) {
+    this.type = "rotate";
+    this.angle = angle;
+    this.time = new Date().getTime();
+}
+
+/*
+The playback function requires events with timestamps
+
+all events will be added to the events array
+
+*/
+var events = [];
+
+
+/* Control */
+
+/*
+This function executes the any Whiteboard event
+*/
+function execute(wbevent) {
+    var type = wbevent.type;
+    
+    // do this for every event
+    wbevent.time = new Date().getTime();
+    events.push(wbevent);
+    
+    if(type === "beginpath") {
+        context.beginPath();
+        context.moveTo(wbevent.coordinates[0],
+                       wbevent.coordinates[1]);
+        context.stroke();
+    } else if (type === "drawpathtopoint") {  
+        context.lineTo(getX(event),getY(event));
+        context.stroke();     
+    } else if (type === "closepath") {
+        context.closePath();
+    } else if(type === "strokestyle") {
+        context.strokeStyle = wbevent.color;
+    } else if(type === "zoom") {
+        var newWidth = canvas.offsetWidth * wbevent.factor;
+        var newHeight = canvas.offsetHeight * wbevent.factor;
+        canvas.style.width = newWidth + "px";
+        canvas.style.height = newHeight + "px";
+    } else if(type === "rotate") {
+        var radian = (wbevent.angle * Math.PI * 2)/360;
+        console.log(radian);
+        context.rotate(radian);
+    }
+}
 
 /*
 Help function to get the x coordinate inside canvas
@@ -38,46 +130,33 @@ function getY(event) {
     return canvasy;
 }
 
-
 /*
-This function adds a point to the polyline 
-that is beeing drawn
+The pencil function is defined with the following functions
 */
-function addPointToPolyline(event) {
-    console.log("add point to path");
-    context.lineTo(getX(event),getY(event));
-    context.stroke();
+function activatePencil() {
+    console.log("pencil activated");
+    $("#canvas").bind("mousedown", beginPencilDraw);
 }
 
-/*
-This function stops the polyline drawing
-*/
-function endPolylineDraw(event) {
-    console.log("end polyline draw");
+function beginPencilDraw(event) {
+    console.log("begin pencil draw");
+    var e = new BeginPath(getX(event),getY(event));
+    console.log(e);
+    execute(e);
+    $("#canvas").bind("mousemove", pencilDraw);
+    $("#canvas").bind("mouseup", endPencilDraw);
+    $("#canvas").bind("mouseout", endPencilDraw);
+}
+
+function pencilDraw(event) {
+    console.log("pencil draw");
+    var e = new DrawPathToPoint(getX(event),getY(event));
+    console.log(e);
+    execute(e);
+}
+function endPencilDraw(event) {
+    console.log("end pencile draw");
     $("#canvas").unbind();
-}
-
-/*
-This function is called
-on mousedown when the polyline draw
-is chosen.
-*/
-function beginPolylineDraw(event) {
-    console.log("begin polyline draw");
-    context.moveTo(getX(event),getY(event));
-    $("#canvas").bind("mousemove", addPointToPolyline);
-    $("#canvas").bind("mouseup", endPolylineDraw);
-    $("#canvas").bind("mouseout", endPolylineDraw);
-}
-
-/*
-This function handles the onmousedow event on the polygon
-draw button
-*/
-function drawPolyline() {
-    console.log("draw polyline begin");
-    context.beginPath();
-    $("#canvas").bind("mousedown", beginPolylineDraw);
 }
 
 /*
@@ -85,45 +164,28 @@ set the strokestyle with this function
 */
 function setStrokeStyle(color) {
     console.log("set stroke style");
-    console.log(color);
-    context.strokeStyle = color;
-}
-
-//global value to remember the previous color when eraser activated
-var previousStrokeStyle = context.strokeStyle;
-/*
-This function deactivates the eraser
-*/
-function deactivateEraser(event) {
-    console.log("deactivate eraser");
-    context.strokeStyle = previousStrokeStyle;
-    $("#canvas").unbind();
+    var e = new StrokeStyle(color);
+    execute(e);
 }
 
 /*
-This function activates the eraser function..
-at the moment it only draw a white line on top
-of the other graphics
+zoomin and zoomout functions
 */
-function activateEraser() {
-    previousStrokeStyle = context.strokesStyle;
-    context.strokeStyle = "#FFFFFF";
-    drawPolyline();
+function zoomin() {
+    var e = new Zoom(1.5);
+    execute(e);
+}
+
+function zoomout() {
+    var e = new Zoom(0.5);
+    execute(e);
 }
 
 /*
-This function scales so that it will have a 
-zoom in effect with the given factor
+function that rotates the canvas
 */
-function zoom(factor) {
-    console.log("zoomin");
-    //context.scale(factor,factor);
-    var newWidth = canvas.offsetWidth * factor;
-    var newHeight = canvas.offsetHeight * factor;
-    canvas.style.width = newWidth + "px";
-    canvas.style.height = newHeight + "px";
-    console.log(factor);
-    console.log(canvas.width);
-    console.log(canvas.offsetWidth);
-    console.log(newWidth);
+function rotate(degree) {
+    var e = new Rotate(degree);
+    execute(e);
 }
+

@@ -9,13 +9,12 @@
     <body>
     <div id="container">
         <div id="tools">
-            <button type="button" id="drawpolyline" onmousedown="drawPolyline()">polyline</button>
+            <button type="button" id="drawpolyline" onmousedown="activatePencil()">pencil</button>
             <input id="color" type="text" name="color" size="7" value="#000000" maxlength="7" />
             <button type="button" onmousedown="setStrokeStyle(document.getElementById('color').value)">choose color</button>
-            <button type="button" onmousedown="activateEraser(event)">eraser</button>
-            <button type="button" onmousedown="zoom(1.5)">Zoom in</button>
-            <button type="button" onmousedown="zoom(0.5)">Zoom out</button>
-            <button type="button">rotate</button>
+            <button type="button" onmousedown="zoomin()">Zoom in</button>
+            <button type="button" onmousedown="zoomout()">Zoom out</button>
+            <button type="button" onmousedown="rotate(90)">rotate 90 degrees</button>
             <button type="button">rewind</button>
             <button type="button">play</button>
             <button type="button">fast forward</button>
