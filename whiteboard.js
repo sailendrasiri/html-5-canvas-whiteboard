@@ -1,14 +1,18 @@
 
 
+//set the canvas width and height
+// the offsetWidth and Height is default width and height
 var canvas = document.getElementById("canvas");
-canvas.width = 700;
-canvas.height = 400;
+canvas.width = canvas.offsetWidth;
+canvas.height = canvas.offsetHeight;
+
 console.log(canvas);
 var context = canvas.getContext('2d');
 
 //initial values for the drawing context
 context.lineWidth = 5;
 context.lineCap = "round";
+var zoomFactor = 1.0;
 
 
 /*
@@ -16,14 +20,22 @@ Help function to get the x coordinate inside canvas
 counted from the left 
 */
 function getX(event) {
-    return (event.clientX - $("#canvas").offset().left);
+    var cssx = (event.clientX - $("#canvas").offset().left);
+    var xrel = canvas.width/canvas.offsetWidth;
+    var canvasx = cssx * xrel;
+    console.log(canvasx);
+    return canvasx;
 }
 /*
 Help function to get the y coordinate inside canvas
 counted from the top 
 */
 function getY(event) {
-    return (event.clientY - $("#canvas").offset().top);
+    var cssy = (event.clientY - $("#canvas").offset().top);
+    var yrel = canvas.height/canvas.offsetHeight;
+    var canvasy = cssy * yrel;
+    console.log(canvasy);
+    return canvasy;
 }
 
 
@@ -99,4 +111,19 @@ function activateEraser() {
     drawPolyline();
 }
 
-
+/*
+This function scales so that it will have a 
+zoom in effect with the given factor
+*/
+function zoom(factor) {
+    console.log("zoomin");
+    //context.scale(factor,factor);
+    var newWidth = canvas.offsetWidth * factor;
+    var newHeight = canvas.offsetHeight * factor;
+    canvas.style.width = newWidth + "px";
+    canvas.style.height = newHeight + "px";
+    console.log(factor);
+    console.log(canvas.width);
+    console.log(canvas.offsetWidth);
+    console.log(newWidth);
+}

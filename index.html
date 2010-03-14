@@ -13,14 +13,16 @@
             <input id="color" type="text" name="color" size="7" value="#000000" maxlength="7" />
             <button type="button" onmousedown="setStrokeStyle(document.getElementById('color').value)">choose color</button>
             <button type="button" onmousedown="activateEraser(event)">eraser</button>
-            <button type="button">transform</button>
-            <button type="button">scale</button>
+            <button type="button" onmousedown="zoom(1.5)">Zoom in</button>
+            <button type="button" onmousedown="zoom(0.5)">Zoom out</button>
             <button type="button">rotate</button>
             <button type="button">rewind</button>
             <button type="button">play</button>
             <button type="button">fast forward</button>
         </div> <!-- tools -->
-        <canvas id="canvas"></canvas>
+        <div id="canvas-container">
+            <canvas id="canvas"></canvas>
+        </div>
     </div> <!-- container -->
     <script src="jquery-1.4.2.min.js" type="application/javascript"></script>
     <script src="whiteboard.js" type="application/javascript"></script>
