@@ -39,6 +39,8 @@ function DrawPathToPoint(x, y) {
 function Erase(x,y) {
     this.type = "erase";
     this.coordinates = [x,y];
+    this.height = 5;
+    this.width = 5;
     this.time = new Date().getTime();
 }
 /*Storke style event */
@@ -75,13 +77,19 @@ var events = [];
 
 /*
 This function executes the any Whiteboard event
+
+firstexecute is a boolean value that tells the function to
+save the event or to execute it without saving. default is true
 */
-function execute(wbevent) {
+function execute(wbevent, firstexecute) {
     var type = wbevent.type;
-    
+    //console.log(type);
     // do this for every event
-    wbevent.time = new Date().getTime();
-    events.push(wbevent);
+    if(firstexecute || firstexecute === undefined) {
+        wbevent.time = new Date().getTime();
+        events.push(wbevent);
+        console.log("firstexecute");
+    }
     
     if(type === "beginpath") {
         context.beginPath();
@@ -89,7 +97,8 @@ function execute(wbevent) {
                        wbevent.coordinates[1]);
         context.stroke();
     } else if (type === "drawpathtopoint") {  
-        context.lineTo(getX(event),getY(event));
+        context.lineTo(wbevent.coordinates[0],
+                       wbevent.coordinates[1]);
         context.stroke();     
     } else if (type === "closepath") {
         context.closePath();
@@ -102,10 +111,41 @@ function execute(wbevent) {
         canvas.style.height = newHeight + "px";
     } else if(type === "rotate") {
         var radian = (wbevent.angle * Math.PI * 2)/360;
-        console.log(radian);
         context.rotate(radian);
+    } else if (type === "erase") {
+        context.clearRect(wbevent.coordinates[0],
+                          wbevent.coordinates[0],
+                          wbevent.width,
+                          wbevent.height);
     }
 }
+
+/*
+Animate from the beginning
+*/
+
+function animate() {
+    context.clearRect(0,0,canvas.width,canvas.height);
+    animatenext();
+}
+
+var eventind = 0;
+
+function animatenext() {
+    if(eventind === 0) {
+        execute(events[0]);
+        eventind++;   
+    } else if (eventind >= events.length - 1) {
+        return 0;
+    }
+    now = new Date().getTime();
+    
+    var dtime = events[eventind+1].time - events[eventind].time;
+    execute(events[eventind]);
+    setTimeout("animatenext()", dtime);
+    eventind++;
+}
+
 
 /*
 Help function to get the x coordinate inside canvas
@@ -115,7 +155,6 @@ function getX(event) {
     var cssx = (event.clientX - $("#canvas").offset().left);
     var xrel = canvas.width/canvas.offsetWidth;
     var canvasx = cssx * xrel;
-    console.log(canvasx);
     return canvasx;
 }
 /*
@@ -126,7 +165,6 @@ function getY(event) {
     var cssy = (event.clientY - $("#canvas").offset().top);
     var yrel = canvas.height/canvas.offsetHeight;
     var canvasy = cssy * yrel;
-    console.log(canvasy);
     return canvasy;
 }
 
@@ -134,14 +172,11 @@ function getY(event) {
 The pencil function is defined with the following functions
 */
 function activatePencil() {
-    console.log("pencil activated");
     $("#canvas").bind("mousedown", beginPencilDraw);
 }
 
 function beginPencilDraw(event) {
-    console.log("begin pencil draw");
     var e = new BeginPath(getX(event),getY(event));
-    console.log(e);
     execute(e);
     $("#canvas").bind("mousemove", pencilDraw);
     $("#canvas").bind("mouseup", endPencilDraw);
@@ -149,21 +184,40 @@ function beginPencilDraw(event) {
 }
 
 function pencilDraw(event) {
-    console.log("pencil draw");
     var e = new DrawPathToPoint(getX(event),getY(event));
-    console.log(e);
     execute(e);
 }
 function endPencilDraw(event) {
-    console.log("end pencile draw");
     $("#canvas").unbind();
 }
+
+/*
+Eraser functions below 
+*/
+function activateEraser() {
+    $("#canvas").bind("mousedown", beginErasing);
+}
+
+function beginErasing(event) {
+    var e = new BeginPath(getX(event),getY(event));
+    execute(e);
+    $("#canvas").bind("mousemove", erasePoint);
+    $("#canvas").bind("mouseup", endErasing);
+    $("#canvas").bind("mouseout", endErasing);
+}
+function erasePoint(event) {
+    var e = new Erase(getX(event),getY(event));
+    execute(e);
+}
+function endErasing(event) {
+    $("#canvas").unbind();
+}
+
 
 /*
 set the strokestyle with this function
 */
 function setStrokeStyle(color) {
-    console.log("set stroke style");
     var e = new StrokeStyle(color);
     execute(e);
 }

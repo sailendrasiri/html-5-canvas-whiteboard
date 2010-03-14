@@ -12,12 +12,11 @@
             <button type="button" id="drawpolyline" onmousedown="activatePencil()">pencil</button>
             <input id="color" type="text" name="color" size="7" value="#000000" maxlength="7" />
             <button type="button" onmousedown="setStrokeStyle(document.getElementById('color').value)">choose color</button>
+            <button type="button" onmousedown="activateEraser()">eraser</button>
             <button type="button" onmousedown="zoomin()">Zoom in</button>
             <button type="button" onmousedown="zoomout()">Zoom out</button>
             <button type="button" onmousedown="rotate(90)">rotate 90 degrees</button>
-            <button type="button">rewind</button>
-            <button type="button">play</button>
-            <button type="button">fast forward</button>
+            <button type="button" onmousedown="animate()">animate</button>
         </div> <!-- tools -->
         <div id="canvas-container">
             <canvas id="canvas"></canvas>
