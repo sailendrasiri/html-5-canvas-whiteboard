@@ -15,10 +15,10 @@
 (function() {
 	
 /* === BEGIN Fixes ===*/
-if (window['loadFirebugConsole']) {
+if (window.loadFirebugConsole) {
 	window.loadFirebugConsole();
 } else {
-	if (!window['console']) {
+	if (!window.console) {
 		window.console = {};
 		window.console.info = alert;
 		window.console.log = alert;
@@ -128,18 +128,18 @@ window.Whiteboard = {
 	    }
 	    
 	    if(type === "beginpath") {
-	    	this.context.beginPath();
-	    	this.context.moveTo(wbevent.coordinates[0],
+	        this.context.beginPath();
+	        this.context.moveTo(wbevent.coordinates[0],
 	                       wbevent.coordinates[1]);
 	        this.context.stroke();
 	    } else if (type === "drawpathtopoint") {  
-	    	this.context.lineTo(wbevent.coordinates[0],
+	        this.context.lineTo(wbevent.coordinates[0],
 	                       wbevent.coordinates[1]);
-	    	this.context.stroke();     
+	        this.context.stroke();     
 	    } else if (type === "closepath") {
-	    	this.context.closePath();
+	        this.context.closePath();
 	    } else if(type === "strokestyle") {
-	    	this.context.strokeStyle = wbevent.color;
+	        this.context.strokeStyle = wbevent.color;
 	    } else if(type === "zoom") {
 	        var newWidth = this.canvas.offsetWidth * wbevent.factor;
 	        var newHeight = this.canvas.offsetHeight * wbevent.factor;
@@ -149,7 +149,7 @@ window.Whiteboard = {
 	        var radian = (wbevent.angle * Math.PI * 2)/360;
 	        this.context.rotate(radian);
 	    } else if (type === "erase") {
-	    	this.context.clearRect(wbevent.coordinates[0],
+	        this.context.clearRect(wbevent.coordinates[0],
 	                          wbevent.coordinates[0],
 	                          wbevent.width,
 	                          wbevent.height);
@@ -180,16 +180,17 @@ window.Whiteboard = {
 	
 	animatenext: function() {
 	    if(Whiteboard.eventind === 0) {
-	    	Whiteboard.execute(Whiteboard.events[0]);
-	    	Whiteboard.eventind++;   
+	        Whiteboard.execute(Whiteboard.events[0]);
+	        Whiteboard.eventind++;   
 	    }
 	    var now = new Date().getTime();
 	    
 	    var dtime = Whiteboard.events[Whiteboard.eventind+1].time - Whiteboard.events[Whiteboard.eventind].time;
 	    Whiteboard.execute(Whiteboard.events[Whiteboard.eventind]);
 	    
-	    if (Whiteboard.eventind < Whiteboard.events.length - 1)
-	    	setTimeout(Whiteboard.animatenext, dtime);
+	    if (Whiteboard.eventind < Whiteboard.events.length - 1) {
+	        setTimeout(Whiteboard.animatenext, dtime);
+	    }
 	    Whiteboard.eventind++;
 	},
 	
