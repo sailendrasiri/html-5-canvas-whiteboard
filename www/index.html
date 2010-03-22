@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/> 
+    <title>HTML 5 Whiteboard</title>
+    <link rel="stylesheet" type="text/css" href="reset.css" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+	<script src="js/libs/jquery-1.4.2.min.js" type="application/javascript"></script>
+	<script src="js/whiteboard.jquery.js" type="application/javascript"></script>
+<script type="text/javascript">//<![CDATA[
+// Init the script after document ready
+$(document).ready(function(){
+	Whiteboard.init($("#canvas"));
+
+	// Add button events
+	$("button#button_pencil").mousedown(Whiteboard.activatePencil);
+	$("button#button_color").mousedown(function() {
+		Whiteboard.setStrokeStyle($("#color").value);
+	});
+	$("button#button_eraser").mousedown(Whiteboard.activateEraser);
+	$("button#button_zoomin").mousedown(Whiteboard.zoomin);
+	$("button#button_zoomout").mousedown(Whiteboard.zoomout);
+	$("button#button_rotate90").mousedown(function() {
+		Whiteboard.rotate(90);
+	});
+	$("button#button_animate").mousedown(Whiteboard.animate);
+});
+
+//]]></script>
+</head>
+<body>
+<div id="container">
+    <div id="tools">
+        <button id="button_pencil" type="button" id="drawpolyline">pencil</button>
+        <input id="color" type="text" name="color" size="7" value="#000000" maxlength="7" />
+        <button id="button_color" type="button">choose color</button>
+        <button id="button_eraser" type="button">eraser</button>
+        <button id="button_zoomin" type="button">Zoom in</button>
+        <button id="button_zoomout" type="button">Zoom out</button>
+        <button id="button_rotate90" type="button">rotate 90 degrees</button>
+        <button id="button_animate" type="button">animate</button>
+    </div> <!-- /tools -->
+    <div id="canvas-container">
+        <canvas id="canvas"></canvas>
+    </div>
+</div> <!-- /container -->
+</body>
+</html>
+

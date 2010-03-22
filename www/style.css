@@ -1,0 +1,34 @@
+
+#container {
+position: absolute;
+border: 1px solid black;
+width: 1000px;
+left: 50%;
+margin-left: -500px;
+overflow: hidden;
+height: 99%;
+}
+
+#canvas-container {
+position: absolute;
+height: 100%;
+top: 40px;
+width: 100%;
+}
+
+#canvas {
+position: relative;
+outline: 1px solid black;
+height: 100%;
+width: 100%;
+z-index: 0;
+}
+
+#tools {
+position: relative;
+border: 1px solid black;
+height: 40px;
+width: 100%;
+background-color: white;
+z-index: 10;
+}
