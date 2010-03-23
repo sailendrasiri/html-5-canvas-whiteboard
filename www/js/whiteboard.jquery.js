@@ -27,6 +27,18 @@ if (window.loadFirebugConsole) {
 	}
 }
 /* === END Fixes ===*/
+
+/**
+ * =============
+ *    HELPERS
+ * =============
+ */
+function clone(obj) {
+	var clone = {};
+	clone.prototype = obj.prototype;
+	for (property in obj) clone[property] = obj[property];
+	return clone;
+}
 	
 /**
  * =============
@@ -91,16 +103,17 @@ function Rotate(angle) {
 window.Whiteboard = {
 	
 	context: null,
-	canvasElement: null,
-	canvas: null,
+	canvasElement: null, // jQuery element for canvas
+	canvas: null, // HTML5 canvas
 	type: '',
 	coordinates: [0,0],
 	events: [],
-	eventind: 0,
+	animationind: 0,
+	
+	drawColor: '#000000',
 	
 	
 	init: function(canvasElement) {
-		
 		// set the canvas width and height
 		// the offsetWidth and Height is default width and height
 		this.canvasElement = canvasElement;
@@ -135,7 +148,7 @@ window.Whiteboard = {
 	    } else if (type === "drawpathtopoint") {  
 	        this.context.lineTo(wbevent.coordinates[0],
 	                       wbevent.coordinates[1]);
-	        this.context.stroke();     
+	        this.context.stroke();
 	    } else if (type === "closepath") {
 	        this.context.closePath();
 	    } else if(type === "strokestyle") {
@@ -146,11 +159,28 @@ window.Whiteboard = {
 	        this.canvas.style.width = newWidth + "px";
 	        this.canvas.style.height = newHeight + "px";
 	    } else if(type === "rotate") {
-	        var radian = (wbevent.angle * Math.PI * 2)/360;
+	        var radian = wbevent.angle * Math.PI / 180;
+	        var wid = this.canvas.width;
+	        var hei = this.canvas.height;
+	        
+	        var tmp = document.createElement("canvas");
+	        var tmpcnv = tmp.getContext('2d');
+	        tmp.width = wid;
+	        tmp.height = hei;
+	        tmpcnv.drawImage(this.canvas, 0, 0);
+	        
+	        this.context.save();
+	        this.context.clearRect(0, 0, wid, hei);
+	        this.context.translate(wid/2,hei/2);
 	        this.context.rotate(radian);
+	        this.context.translate(-wid/2,-hei/2);
+	        this.context.drawImage(tmp, 0, 0);
+	        this.context.restore();
+	        
+	        tmp = tmpcnv = undefined;
 	    } else if (type === "erase") {
 	        this.context.clearRect(wbevent.coordinates[0],
-	                          wbevent.coordinates[0],
+	                          wbevent.coordinates[1],
 	                          wbevent.width,
 	                          wbevent.height);
 	    }
@@ -170,28 +200,28 @@ window.Whiteboard = {
 	    return canvasy;
 	},
 	
-	/**
-	 * BEGIN ACTIONS
-	 */
+	/* === BEGIN ACTIONS === */
+	
 	animate: function() {
+		Whiteboard.animationind = 0;
 		Whiteboard.context.clearRect(0,0,Whiteboard.canvas.width,Whiteboard.canvas.height);
 		Whiteboard.animatenext();
 	},
 	
 	animatenext: function() {
-	    if(Whiteboard.eventind === 0) {
-	        Whiteboard.execute(Whiteboard.events[0]);
-	        Whiteboard.eventind++;   
+	    if(Whiteboard.animationind === 0) {
+	        Whiteboard.execute(Whiteboard.events[0], false);
+	        Whiteboard.animationind++;   
 	    }
-	    var now = new Date().getTime();
 	    
-	    var dtime = Whiteboard.events[Whiteboard.eventind+1].time - Whiteboard.events[Whiteboard.eventind].time;
-	    Whiteboard.execute(Whiteboard.events[Whiteboard.eventind]);
-	    
-	    if (Whiteboard.eventind < Whiteboard.events.length - 1) {
+	    if (Whiteboard.animationind < Whiteboard.events.length - 1) {
+	    	var now = new Date().getTime();
+		    var dtime = Whiteboard.events[Whiteboard.animationind+1].time - Whiteboard.events[Whiteboard.animationind].time;
+		    Whiteboard.execute(Whiteboard.events[Whiteboard.animationind], false);
+		    
 	        setTimeout(Whiteboard.animatenext, dtime);
 	    }
-	    Whiteboard.eventind++;
+	    Whiteboard.animationind++;
 	},
 	
 	activatePencil: function() {
@@ -237,8 +267,10 @@ window.Whiteboard = {
 	},
 	
 	setStrokeStyle: function(color) {
-	    var e = new StrokeStyle(color);
-	    Whiteboard.execute(e);
+		if (color != Whiteboard.drawColor) {
+			var e = new StrokeStyle(color);
+			Whiteboard.execute(e);
+		}
 	},
 
 	zoomin: function() {
@@ -256,6 +288,8 @@ window.Whiteboard = {
 	    Whiteboard.execute(e);
 	}
 	
+	/* === END ACTIONS === */
+
 };
 
 /**

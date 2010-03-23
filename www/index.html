@@ -13,9 +13,12 @@ $(document).ready(function(){
 	Whiteboard.init($("#canvas"));
 
 	// Add button events
-	$("button#button_pencil").mousedown(Whiteboard.activatePencil);
+	$("button#button_pencil").mousedown(function() {
+		Whiteboard.setStrokeStyle($("#color").attr("value"));
+		Whiteboard.activatePencil();
+	});
 	$("button#button_color").mousedown(function() {
-		Whiteboard.setStrokeStyle($("#color").value);
+		Whiteboard.setStrokeStyle($("#color").attr("value"));
 	});
 	$("button#button_eraser").mousedown(Whiteboard.activateEraser);
 	$("button#button_zoomin").mousedown(Whiteboard.zoomin);
@@ -25,7 +28,6 @@ $(document).ready(function(){
 	});
 	$("button#button_animate").mousedown(Whiteboard.animate);
 });
-
 //]]></script>
 </head>
 <body>
