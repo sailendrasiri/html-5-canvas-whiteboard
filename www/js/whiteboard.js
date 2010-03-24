@@ -27,18 +27,6 @@ if (window.loadFirebugConsole) {
 	}
 }
 /* === END Fixes ===*/
-
-/**
- * =============
- *    HELPERS
- * =============
- */
-function clone(obj) {
-	var clone = {};
-	clone.prototype = obj.prototype;
-	for (property in obj) clone[property] = obj[property];
-	return clone;
-}
 	
 /**
  * =============
@@ -103,8 +91,7 @@ function Rotate(angle) {
 window.Whiteboard = {
 	
 	context: null,
-	canvasElement: null, // jQuery element for canvas
-	canvas: null, // HTML5 canvas
+	canvas: null,
 	type: '',
 	coordinates: [0,0],
 	events: [],
@@ -113,11 +100,10 @@ window.Whiteboard = {
 	drawColor: '#000000',
 	
 	
-	init: function(canvasElement) {
+	init: function(canvasid) {
 		// set the canvas width and height
 		// the offsetWidth and Height is default width and height
-		this.canvasElement = canvasElement;
-		this.canvas = document.getElementById(canvasElement.attr("id"));
+		this.canvas = document.getElementById(canvasid);
 		this.canvas.width = this.canvas.offsetWidth;
 		this.canvas.height = this.canvas.offsetHeight;
 		
@@ -169,6 +155,7 @@ window.Whiteboard = {
 	        tmp.height = hei;
 	        tmpcnv.drawImage(this.canvas, 0, 0);
 	        
+	        // TODO: Fix: the image blurs out after multiple rotations 
 	        this.context.save();
 	        this.context.clearRect(0, 0, wid, hei);
 	        this.context.translate(wid/2,hei/2);
@@ -186,19 +173,11 @@ window.Whiteboard = {
 	    }
 	},
 	
-	getX: function(event) {
-		var cssx = (event.clientX - this.canvasElement.offset().left);
-	    var xrel = this.canvas.width/this.canvas.offsetWidth;
-	    var canvasx = cssx * xrel;
-	    return canvasx;
+	getRelative: function() {
+		return {width: this.canvas.width/this.canvas.offsetWidth,
+				height: this.canvas.height/this.canvas.offsetHeight};
 	},
 	
-	getY: function(event) {
-	    var cssy = (event.clientY - this.canvasElement.offset().top);
-	    var yrel = this.canvas.height/this.canvas.offsetHeight;
-	    var canvasy = cssy * yrel;
-	    return canvasy;
-	},
 	
 	/* === BEGIN ACTIONS === */
 	
@@ -224,46 +203,24 @@ window.Whiteboard = {
 	    Whiteboard.animationind++;
 	},
 	
-	activatePencil: function() {
-		Whiteboard.canvasElement.bind("mousedown", Whiteboard.beginPencilDraw);
-	},
-
-	beginPencilDraw: function(event) {
-	    var e = new BeginPath(Whiteboard.getX(event),Whiteboard.getY(event));
-	    Whiteboard.execute(e);
-	    Whiteboard.canvasElement.bind("mousemove", Whiteboard.pencilDraw);
-	    Whiteboard.canvasElement.bind("mouseup", Whiteboard.endPencilDraw);
-	    Whiteboard.canvasElement.bind("mouseout", Whiteboard.endPencilDraw);
-	},
-
-	pencilDraw: function(event) {
-	    var e = new DrawPathToPoint(Whiteboard.getX(event),Whiteboard.getY(event));
+	beginPencilDraw: function(x, y) {
+	    var e = new BeginPath(x, y);
 	    Whiteboard.execute(e);
 	},
 	
-	endPencilDraw: function (event) {
-		Whiteboard.canvasElement.unbind();
-	},
-	
-	activateEraser: function() {
-		Whiteboard.canvasElement.bind("mousedown", Whiteboard.beginErasing);
-	},
-
-	beginErasing: function(event) {
-	    var e = new BeginPath(Whiteboard.getX(event),Whiteboard.getY(event));
-	    Whiteboard.execute(e);
-	    Whiteboard.canvasElement.bind("mousemove", Whiteboard.erasePoint);
-	    Whiteboard.canvasElement.bind("mouseup", Whiteboard.endErasing);
-	    Whiteboard.canvasElement.bind("mouseout", Whiteboard.endErasing);
-	},
-	
-	erasePoint: function(event) {
-	    var e = new Erase(Whiteboard.getX(event),Whiteboard.getY(event));
+	pencilDraw: function(x, y) {
+	    var e = new DrawPathToPoint(x, y);
 	    Whiteboard.execute(e);
 	},
 	
-	endErasing: function(event) {
-		Whiteboard.canvasElement.unbind();
+	beginErasing: function(x, y) {
+	    var e = new BeginPath(x, y);
+	    Whiteboard.execute(e);
+	},
+	
+	erasePoint: function(x, y) {
+	    var e = new Erase(x, y);
+	    Whiteboard.execute(e);
 	},
 	
 	setStrokeStyle: function(color) {
@@ -272,7 +229,7 @@ window.Whiteboard = {
 			Whiteboard.execute(e);
 		}
 	},
-
+	
 	zoomin: function() {
 	    var e = new Zoom(1.5);
 	    Whiteboard.execute(e);
@@ -292,20 +249,4 @@ window.Whiteboard = {
 
 };
 
-/**
- * ======================
- *    JQUERY FUNCTIONS
- * ======================   
- */
-/**
- * JQuery functioita voi lisätä näin. Tätä funktiota voisi nyt
- * kutsua mille tahansa elementille.
- * Esim:
- * $("#canvas").funktio(arvo);
- */
-jQuery.fn.funktio = function(value) {
-	// TODO
-};
-
-/* === END === */
 })();

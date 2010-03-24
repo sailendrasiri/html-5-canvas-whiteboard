@@ -6,25 +6,33 @@
     <link rel="stylesheet" type="text/css" href="reset.css" />
     <link rel="stylesheet" type="text/css" href="style.css" />
 	<script src="js/libs/jquery-1.4.2.min.js" type="application/javascript"></script>
-	<script src="js/whiteboard.jquery.js" type="application/javascript"></script>
+	<script src="js/whiteboard.js" type="application/javascript"></script>
+	<script src="js/whiteboardui.jquery.js" type="application/javascript"></script>
 <script type="text/javascript">//<![CDATA[
 // Init the script after document ready
 $(document).ready(function(){
-	Whiteboard.init($("#canvas"));
+	WhiteboardUi.init($("#canvas"));
 
-	// Add button events
+	// Button events
+	// TODO: These could be moved to the UI-script
+	// TODO: Leave id-names etc. configuration here
 	$("button#button_pencil").mousedown(function() {
 		Whiteboard.setStrokeStyle($("#color").attr("value"));
-		Whiteboard.activatePencil();
+		WhiteboardUi.activatePencil();
 	});
 	$("button#button_color").mousedown(function() {
 		Whiteboard.setStrokeStyle($("#color").attr("value"));
 	});
-	$("button#button_eraser").mousedown(Whiteboard.activateEraser);
+	$("button#button_eraser").mousedown(WhiteboardUi.activateEraser);
 	$("button#button_zoomin").mousedown(Whiteboard.zoomin);
 	$("button#button_zoomout").mousedown(Whiteboard.zoomout);
 	$("button#button_rotate90").mousedown(function() {
-		Whiteboard.rotate(90);
+		var rot = parseInt($("#rotation").attr("value"));
+		if (rot >= -360 && rot <= 360) {
+			Whiteboard.rotate(rot);
+		} else {
+			alert("Rotation value between 0 and 360!");
+		}
 	});
 	$("button#button_animate").mousedown(Whiteboard.animate);
 });
@@ -39,7 +47,9 @@ $(document).ready(function(){
         <button id="button_eraser" type="button">eraser</button>
         <button id="button_zoomin" type="button">Zoom in</button>
         <button id="button_zoomout" type="button">Zoom out</button>
-        <button id="button_rotate90" type="button">rotate 90 degrees</button>
+        <button id="button_rotate90" type="button">rotate</button>
+        <input id="rotation" type="text" name="color" size="3" value="90" maxlength="3" />
+        <span>degrees</span>
         <button id="button_animate" type="button">animate</button>
     </div> <!-- /tools -->
     <div id="canvas-container">
