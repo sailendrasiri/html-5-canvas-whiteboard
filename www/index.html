@@ -31,7 +31,7 @@ $(document).ready(function(){
 		if (rot >= -360 && rot <= 360) {
 			Whiteboard.rotate(rot);
 		} else {
-			alert("Rotation value between 0 and 360!");
+			alert("Rotation value between -360 and 360!");
 		}
 	});
 	$("button#button_animate").mousedown(Whiteboard.animate);

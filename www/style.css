@@ -32,3 +32,10 @@ width: 100%;
 background-color: white;
 z-index: 10;
 }
+
+.pencil_active {
+cursor: url(img/pencil.gif), auto;
+}
+.eraser_active {
+cursor: url(img/eraser.gif), auto;
+}

@@ -17,10 +17,21 @@
 window.WhiteboardUi = {
 	
 	canvasElement: null, // jQuery element for canvas
+	elementConf: {
+		pencil: 'pencil_active',
+		eraser: 'eraser_active'
+	},
 	
-	init: function(canvasElement) {
+	init: function(canvasElement, conf) {
 		this.canvasElement = canvasElement;
 		Whiteboard.init(canvasElement.attr("id"));
+		if (conf !== undefined) {
+			for (var i in this.elementConf) {
+				if (conf.i !== undefined) {
+					this.elementConf.i = conf.i;
+				}
+			}
+		}
 	},
 	
 	getX: function(event) {
@@ -37,10 +48,16 @@ window.WhiteboardUi = {
 	    return canvasy;
 	},
 	
+	changeTool: function() {
+		WhiteboardUi.canvasElement.unbind();
+		WhiteboardUi.canvasElement.removeClass(WhiteboardUi.elementConf.pencil);
+		WhiteboardUi.canvasElement.removeClass(WhiteboardUi.elementConf.eraser);
+	},
+	
 	activatePencil: function(event) {
+		WhiteboardUi.changeTool();
 		WhiteboardUi.canvasElement.bind("mousedown", WhiteboardUi.beginPencilDraw);
-		// TODO: Image location to conf
-		WhiteboardUi.canvasElement.css('cursor', 'url(img/pencil.gif), auto');
+		WhiteboardUi.canvasElement.addClass(WhiteboardUi.elementConf.pencil);
 	},
 
 	beginPencilDraw: function(event) {
@@ -53,12 +70,13 @@ window.WhiteboardUi = {
 	},
 	
 	endPencilDraw: function (event) {
-		WhiteboardUi.canvasElement.unbind();
-		WhiteboardUi.canvasElement.css('cursor', 'auto');
+		WhiteboardUi.canvasElement.unbind("mousemove");
 	},
 	
 	activateEraser: function(event) {
+		WhiteboardUi.changeTool();
 		WhiteboardUi.canvasElement.bind("mousedown", WhiteboardUi.beginErasing);
+		WhiteboardUi.canvasElement.addClass(WhiteboardUi.elementConf.eraser);
 	},
 
 	beginErasing: function(event) {
@@ -71,7 +89,7 @@ window.WhiteboardUi = {
 	},
 	
 	endErasing: function(event) {
-		WhiteboardUi.canvasElement.unbind();
+		WhiteboardUi.canvasElement.unbind("mousemove");
 	}
 	
 }
