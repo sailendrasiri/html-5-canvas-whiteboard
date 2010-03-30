@@ -1,56 +1,106 @@
 
 #container {
-position: absolute;
-border: 1px solid black;
-width: 1000px;
-left: 50%;
-margin-left: -500px;
-overflow: hidden;
-height: 99%;
+	position: absolute;
+	border: 1px solid black;
+	width: 1000px;
+	left: 50%;
+	margin-left: -500px;
+	overflow: hidden;
+	height: 99%;
 }
 
 #canvas-container {
-position: absolute;
-height: 100%;
-top: 40px;
-width: 100%;
+	position: absolute;
+	height: 100%;
+	top: 40px;
+	width: 100%;
 }
 
 #canvas {
-position: relative;
-outline: 1px solid black;
-height: 100%;
-width: 100%;
-z-index: 0;
+	position: relative;
+	outline: 1px solid black;
+	height: 100%;
+	width: 100%;
+	z-index: 0;
 }
 
 #tools {
-position: relative;
-border: 1px solid black;
-height: 40px;
-width: 100%;
-background-color: white;
-z-index: 10;
+	position: relative;
+	border: 1px solid black;
+	height: 40px;
+	width: 100%;
+	background-color: white;
+	z-index: 10;
 }
 
-#shape {
-display: inline;
+#tools > * {
+	/* This is to correctly align the 'popup' menus. */
+	float: left;
+}
+
+#tools > input {
+	display: block;
+	margin: 2px 0 0 0;
 }
 
 #shape_menu {
-display: none;
-position: absolute;
-left: 335px;
-border: 1px solid;
-width: 200px;
-height: 100px;
-background-color: #ffffff;
-padding: 5px;
+	display: none;
+	position: absolute;
+	border: 1px solid;
+	width: 200px;
+	height: 100px;
+	background-color: #ffffff;
+	padding: 5px;
 }
 
-.pencil_active {
-cursor: url(img/pencil.gif), auto;
+#zoom {
+	z-index: 100;
+	display: none;
+	position: absolute;
+	top: 25%;
+	right: 0;
+	width: 50px;
+	height: 50%;
+	border: 1px solid #cccccc;
 }
-.eraser_active {
-cursor: url(img/eraser.gif), auto;
+
+#zoom #zoomamount {
+	position: absolute;
+	margin-top: -21px;
+	height: 20px;
+	width: 100%;
+	text-align: center;
+	background-color: #ffffff;
 }
+
+#zoom #zoomsection {
+	position: absolute;
+	background-color: #ffffff;	
+	width: 50px;
+	height: 100%;
+}
+
+#zoom #zoomsection #zoombar {
+	position: absolute;
+	margin-left: 20px;
+	width: 10px;
+	height: 100%;
+	background-color: #cccccc;
+}
+
+#zoom #zoomsection #zoomslider {
+	z-index: 105;
+	position: absolute;
+	margin: 0 auto;
+	bottom: 0;
+	width: 50px;
+	height: 20px;
+	background-color: #000000;
+	cursor: move;
+}
+
+
+/* Cursors */
+.pencil_active {cursor: url(img/pencil.gif), auto;}
+.eraser_active {cursor: url(img/eraser.gif), auto;}
+.rectangle_active {cursor: crosshair;}

@@ -36,43 +36,63 @@ if (window.loadFirebugConsole) {
 
 /* === BEGIN Event objects === */
 
-/*Begin path event*/
-function BeginPath(x,y) {
-    this.coordinates = [x,y];
+/* Begin path event */
+function BeginPath(x, y) {
+    this.coordinates = [x, y];
     this.type="beginpath";
 }
-/*End path event*/
+/* Begin shape event */
+function BeginShape(x, y, canvas) {
+	this.type = "beginshape";
+	this.canvas = canvas;
+	this.coordinates = [x, y];
+	this.time = new Date().getTime();
+}
+/* End path event */
 function ClosePath() {
     this.type = "closepath";
 }
-/*Point draw event*/
+/* Point draw event */
 function DrawPathToPoint(x, y) {
     this.type = "drawpathtopoint";
     this.coordinates = [x, y];
     this.time = new Date().getTime();
 }
 /*Erase event */
-function Erase(x,y) {
+function Erase(x, y) {
     this.type = "erase";
-    this.coordinates = [x,y];
+    this.coordinates = [x, y];
     this.height = 5;
     this.width = 5;
     this.time = new Date().getTime();
 }
-/*Storke style event */
+/* Rectangle event */
+function Rectangle(sx, sy, ex, ey) {
+	this.type = "rectangle";
+	this.coordinates = [sx, sy, ex, ey];
+	this.time = new Date().getTime();
+}
+/* Storke style event */
 function StrokeStyle(color) {
     this.type = "strokestyle";
     this.color = color;
     this.time = new Date().getTime();
 }
-/*Zoom event*/
+/* Zoom event */
 function Zoom(factor) {
     this.type = "zoom";
     this.factor = factor;
     this.time = new Date().getTime();
 }
-/*Rotate event
-angle in degrees
+function Restore(canvas) {
+	this.type = "restore";
+	if (canvas !== undefined) {
+		this.canvas = canvas;
+	}
+	this.time = new Date().getTime();
+}
+/* Rotate event
+   angle in degrees
 */
 function Rotate(angle) {
     this.type = "rotate";
@@ -144,6 +164,13 @@ window.Whiteboard = {
 	        var newHeight = this.canvas.offsetHeight * wbevent.factor;
 	        this.canvas.style.width = newWidth + "px";
 	        this.canvas.style.height = newHeight + "px";
+	    } else if (type === "restore") {
+	        var wid = this.canvas.width;
+	        var hei = this.canvas.height;
+	    	this.context.clearRect(0, 0, wid, hei);
+	    	if (wbevent.canvas !== undefined) {
+	    		this.context.drawImage(wbevent.canvas, 0, 0);
+	    	}
 	    } else if(type === "rotate") {
 	        var radian = wbevent.angle * Math.PI / 180;
 	        var wid = this.canvas.width;
@@ -170,6 +197,23 @@ window.Whiteboard = {
 	                          wbevent.coordinates[1],
 	                          wbevent.width,
 	                          wbevent.height);
+	    } else if (type === "rectangle") {
+	    	var sx = wbevent.coordinates[0];
+	    	var sy = wbevent.coordinates[1];
+	    	var ex = wbevent.coordinates[2];
+	    	var ey = wbevent.coordinates[3];
+	    	var tmp = 0;
+	    	if (ex < sx) {
+	    		tmp = sx;
+	    		sx = ex;
+	    		ex = tmp;
+	    	}
+	    	if (ey < sy) {
+	    		tmp = sy;
+	    		sy = ey;
+	    		ey = tmp;
+	    	}
+	    	this.context.strokeRect(sx, sy, ex-sx, ey-sy);
 	    }
 	},
 	
@@ -193,14 +237,14 @@ window.Whiteboard = {
 	        Whiteboard.animationind++;   
 	    }
 	    
+	    Whiteboard.execute(Whiteboard.events[Whiteboard.animationind], false);
+	    Whiteboard.animationind++;
+	    
 	    if (Whiteboard.animationind < Whiteboard.events.length - 1) {
 	    	var now = new Date().getTime();
 		    var dtime = Whiteboard.events[Whiteboard.animationind+1].time - Whiteboard.events[Whiteboard.animationind].time;
-		    Whiteboard.execute(Whiteboard.events[Whiteboard.animationind], false);
-		    
 	        setTimeout(Whiteboard.animatenext, dtime);
 	    }
-	    Whiteboard.animationind++;
 	},
 	
 	beginPencilDraw: function(x, y) {
@@ -223,6 +267,31 @@ window.Whiteboard = {
 	    Whiteboard.execute(e);
 	},
 	
+	beginShape: function(x, y) {
+        var tmp = document.createElement("canvas");
+        var tmpcnv = tmp.getContext('2d');
+        tmp.width = Whiteboard.canvas.width;
+        tmp.height = Whiteboard.canvas.height;
+        tmpcnv.drawImage(Whiteboard.canvas, 0, 0);
+		var e = new BeginShape(x, y, tmp);
+		Whiteboard.execute(e);
+	},
+	
+	drawRectangle: function(x, y) {
+		var i = Whiteboard.events.length - 1;
+		while (i >= 0) {
+			var e = Whiteboard.events[i];
+			if (e.type === "beginshape") {
+				var ev = new Restore(e.canvas);
+				Whiteboard.execute(ev);
+				var ev = new Rectangle(e.coordinates[0], e.coordinates[1], x, y);
+				Whiteboard.execute(ev);
+				break;
+			}
+			i--;
+		}
+	},
+	
 	setStrokeStyle: function(color) {
 		if (color != Whiteboard.drawColor) {
 			var e = new StrokeStyle(color);
@@ -237,6 +306,11 @@ window.Whiteboard = {
 
 	zoomout: function() {
 	    var e = new Zoom(0.5);
+	    Whiteboard.execute(e);
+	},
+	
+	zoom: function(factor) {
+	    var e = new Zoom(factor);
 	    Whiteboard.execute(e);
 	},
 
