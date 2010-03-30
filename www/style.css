@@ -33,6 +33,21 @@ background-color: white;
 z-index: 10;
 }
 
+#shape {
+display: inline;
+}
+
+#shape_menu {
+display: none;
+position: absolute;
+left: 335px;
+border: 1px solid;
+width: 200px;
+height: 100px;
+background-color: #ffffff;
+padding: 5px;
+}
+
 .pencil_active {
 cursor: url(img/pencil.gif), auto;
 }

@@ -19,7 +19,17 @@ window.WhiteboardUi = {
 	canvasElement: null, // jQuery element for canvas
 	elementConf: {
 		pencil: 'pencil_active',
-		eraser: 'eraser_active'
+		eraser: 'eraser_active',
+		button_pencil: 'button_pencil',
+		button_color: 'button_color',
+		button_eraser: 'button_eraser',
+		button_zoomin: 'button_zoomin',
+		button_zoomout: 'button_zoomout',
+		button_rotate: 'button_rotate',
+		button_animate: 'button_animate',
+		input_color: 'color',
+		input_rotation: 'rotation',
+		
 	},
 	
 	init: function(canvasElement, conf) {
@@ -32,6 +42,33 @@ window.WhiteboardUi = {
 				}
 			}
 		}
+		this.addListeners();
+	},
+	
+	getElement: function(ind) {
+		return $('#' + WhiteboardUi.elementConf[ind]);
+	},
+	
+	addListeners: function() {
+		WhiteboardUi.getElement('button_pencil').mousedown(function() {
+			Whiteboard.setStrokeStyle(WhiteboardUi.getElement('input_color').attr("value"));
+			WhiteboardUi.activatePencil();
+		});
+		WhiteboardUi.getElement('button_color').mousedown(function() {
+			Whiteboard.setStrokeStyle(WhiteboardUi.getElement('input_color').attr("value"));
+		});
+		WhiteboardUi.getElement('button_eraser').mousedown(WhiteboardUi.activateEraser);
+		WhiteboardUi.getElement('button_zoomin').mousedown(Whiteboard.zoomin);
+		WhiteboardUi.getElement('button_zoomout').mousedown(Whiteboard.zoomout);
+		WhiteboardUi.getElement('button_rotate').mousedown(function() {
+			var rot = parseInt(WhiteboardUi.getElement('input_rotation').attr("value"));
+			if (rot >= -360 && rot <= 360) {
+				Whiteboard.rotate(rot);
+			} else {
+				alert("Rotation value between -360 and 360!");
+			}
+		});
+		WhiteboardUi.getElement('button_animate').mousedown(Whiteboard.animate);
 	},
 	
 	getX: function(event) {
