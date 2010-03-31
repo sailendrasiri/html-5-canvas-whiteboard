@@ -87,6 +87,7 @@ window.WhiteboardUi = {
 		WhiteboardUi.getElement('button_animate').mousedown(Whiteboard.animate);
 		WhiteboardUi.getElement('button_shape').mouseup(WhiteboardUi.shapeMenu);
 		WhiteboardUi.getElement('button_rectangle').mousedown(function() {
+			Whiteboard.setStrokeStyle(WhiteboardUi.getElement('input_color').attr("value"));
 			WhiteboardUi.shapeMenu();
 			WhiteboardUi.activateRectangle();
 		});

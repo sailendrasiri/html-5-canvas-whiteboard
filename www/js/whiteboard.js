@@ -67,9 +67,10 @@ function Erase(x, y) {
     this.time = new Date().getTime();
 }
 /* Rectangle event */
-function Rectangle(sx, sy, ex, ey) {
+function Rectangle(sx, sy, ex, ey, canvas) {
 	this.type = "rectangle";
 	this.coordinates = [sx, sy, ex, ey];
+	this.canvas = canvas;
 	this.time = new Date().getTime();
 }
 /* Storke style event */
@@ -134,6 +135,11 @@ window.Whiteboard = {
 		this.context.lineWidth = 5;
 		this.context.lineCap = "round";
 		var zoomFactor = 1.0;
+		
+		// Initialize the selected color
+		var col = this.drawColor;
+		this.drawColor = null;
+		this.setStrokeStyle(col);
 	},
 	
 	execute: function(wbevent, firstexecute) {
@@ -151,6 +157,9 @@ window.Whiteboard = {
 	        this.context.moveTo(wbevent.coordinates[0],
 	                       wbevent.coordinates[1]);
 	        this.context.stroke();
+	    } else if(type === "beginshape") {
+	    	this.context.save();
+	    	this.context.beginPath();
 	    } else if (type === "drawpathtopoint") {  
 	        this.context.lineTo(wbevent.coordinates[0],
 	                       wbevent.coordinates[1]);
@@ -213,7 +222,16 @@ window.Whiteboard = {
 	    		sy = ey;
 	    		ey = tmp;
 	    	}
-	    	this.context.strokeRect(sx, sy, ex-sx, ey-sy);
+	    	
+	    	if (wbevent.canvas !== undefined) {
+		        var wid = this.canvas.width;
+		        var hei = this.canvas.height;
+	    		this.context.clearRect(0, 0, wid, hei);
+	    		this.context.drawImage(wbevent.canvas, 0, 0);
+	    	}
+	    	this.context.rect(sx, sy, ex-sx, ey-sy);
+	    	this.context.stroke();
+	    	this.context.beginPath();
 	    }
 	},
 	
@@ -282,10 +300,10 @@ window.Whiteboard = {
 		while (i >= 0) {
 			var e = Whiteboard.events[i];
 			if (e.type === "beginshape") {
-				var ev = new Restore(e.canvas);
+				var ev = new Rectangle(e.coordinates[0], e.coordinates[1], x, y, e.canvas);
+				e = undefined;
 				Whiteboard.execute(ev);
-				var ev = new Rectangle(e.coordinates[0], e.coordinates[1], x, y);
-				Whiteboard.execute(ev);
+				ev = undefined;
 				break;
 			}
 			i--;
