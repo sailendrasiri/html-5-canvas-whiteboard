@@ -75,7 +75,6 @@ window.WhiteboardUi = {
 		WhiteboardUi.getElement('button_zoomin').mousedown(Whiteboard.zoomin);
 		WhiteboardUi.getElement('button_zoomout').mousedown(Whiteboard.zoomout);
 		WhiteboardUi.getElement('button_zoom').mousedown(WhiteboardUi.zoomBar);
-		WhiteboardUi.getElement('zoom_slider').mousedown(WhiteboardUi.activateZoom);
 		WhiteboardUi.getElement('button_rotate').mousedown(function() {
 			var rot = parseInt(WhiteboardUi.getElement('input_rotation').attr("value"));
 			if (rot >= -360 && rot <= 360) {
@@ -161,6 +160,7 @@ window.WhiteboardUi = {
 			zoom.animate({
 				opacity: 1
 			}, 150);
+			WhiteboardUi.activateZoom();
 		} else {
 			WhiteboardUi.activeElems.zoom = false;
 			zoom.animate({
@@ -172,38 +172,33 @@ window.WhiteboardUi = {
 	},
 	
 	activateZoom: function(event) {
-		WhiteboardUi.changeTool();
 		var slider = WhiteboardUi.getElement('zoom_slider');
-		var offsetTop = WhiteboardUi.getElement('zoom_section').offset().top;
-		var height = WhiteboardUi.getElement('zoom_section').height() - slider.height();
-		var sy = offsetTop + WhiteboardUi.getElement('zoom_section').height();
-		$("html").mousemove(function(event) {
-			var amount = WhiteboardUi.getElement('zoom_amount');
-			var ey = event.clientY;
-			var px = parseInt(slider.css('bottom'));
-			if (ey < sy && (slider.offset().top >= offsetTop || 
-					ey > offsetTop + slider.height())) {
-				px = sy - ey;
+		var zoomSec = WhiteboardUi.getElement('zoom_section');
+		var height = zoomSec.height() - slider.height();
+		var sy = zoomSec.offset().top + zoomSec.height();
+		
+		slider.draggable({
+			axis: 'y',
+			containment: 'parent',
+			drag: function(event, ui) {
+				var amount = WhiteboardUi.getElement('zoom_amount');
+				var ey = event.clientY;
+				var px = zoomSec.height() - slider.height() - $(this).position().top;
+				var zoom = 2 * px / height
+				WhiteboardUi.getElement('zoom_amount').html(parseInt(100 * zoom) + "%");
+			},
+			stop: function(event, ui) {
+				WhiteboardUi.performZoom();
 			}
-			slider.css('bottom', px + 'px');
-			
-			var zoom = 2 * px / height
-			WhiteboardUi.getElement('zoom_amount').html(parseInt(100 * zoom) + "%");
 		});
-		$("html").mouseup(WhiteboardUi.performZoom);
 	},
 	
 	performZoom: function(event) {
-		$("html").unbind("mousemove");
-		var slider = WhiteboardUi.getElement('zoom_slider');
-		var height = WhiteboardUi.getElement('zoom_section').height() - slider.height();
-		var zoom = 2 * parseInt(slider.css('bottom')) / height
+		var zoom = parseInt(WhiteboardUi.getElement('zoom_amount').html()) / 100;
 		
 		var rel = (1 + zoom) / WhiteboardUi.zoomrel;
 		Whiteboard.zoom(rel);
 		WhiteboardUi.zoomrel = 1 + zoom;
-		
-		$("html").unbind("mouseup");
 	},
 	
 	shapeMenu: function(event) {
