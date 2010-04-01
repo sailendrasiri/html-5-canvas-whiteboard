@@ -107,3 +107,4 @@
 .pencil_active {cursor: url(img/pencil.gif), auto;}
 .eraser_active {cursor: url(img/eraser.gif), auto;}
 .rectangle_active {cursor: crosshair;}
+.oval_active {cursor: crosshair;}

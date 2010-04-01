@@ -14,20 +14,6 @@
 
 (function() {
 	
-/* === BEGIN Fixes ===*/
-if (window.loadFirebugConsole) {
-	window.loadFirebugConsole();
-} else {
-	if (!window.console) {
-		window.console = {};
-		window.console.info = alert;
-		window.console.log = alert;
-		window.console.warn = alert;
-		window.console.error = alert;
-	}
-}
-/* === END Fixes ===*/
-	
 /**
  * =============
  *     MODEL
@@ -70,6 +56,12 @@ function Erase(x, y) {
 function Rectangle(sx, sy, ex, ey, canvas) {
 	this.type = "rectangle";
 	this.coordinates = [sx, sy, ex, ey];
+	this.canvas = canvas;
+	this.time = new Date().getTime();
+}
+function Oval(x, y, w, h, canvas) {
+	this.type = "oval";
+	this.coordinates = [x, y, w, h];
 	this.canvas = canvas;
 	this.time = new Date().getTime();
 }
@@ -231,7 +223,35 @@ window.Whiteboard = {
 	    	}
 	    	this.context.rect(sx, sy, ex-sx, ey-sy);
 	    	this.context.stroke();
+	    } else if (type === "oval") {
+	    	var x = wbevent.coordinates[0];
+	    	var y = wbevent.coordinates[1];
+	    	var w = wbevent.coordinates[2];
+	    	var h = wbevent.coordinates[3];
+	    	
+	    	var kappa = 0.5522848;
+	    	var ox = (w / 2) * kappa;
+	    	var oy = (h / 2) * kappa;
+	    	var xe = x + w;
+	    	var ye = y + h;
+	    	var xm = x + w / 2;
+	    	var ym = y + h / 2;
+	    	
+	    	if (wbevent.canvas !== undefined) {
+		        var wid = this.canvas.width;
+		        var hei = this.canvas.height;
+	    		this.context.clearRect(0, 0, wid, hei);
+	    		this.context.drawImage(wbevent.canvas, 0, 0);
+	    	}
+	    	
 	    	this.context.beginPath();
+	    	this.context.moveTo(x, ym);
+	    	this.context.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+	    	this.context.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
+	    	this.context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+	    	this.context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+	    	this.context.closePath();
+	    	this.context.stroke();
 	    }
 	},
 	
@@ -301,9 +321,27 @@ window.Whiteboard = {
 			var e = Whiteboard.events[i];
 			if (e.type === "beginshape") {
 				var ev = new Rectangle(e.coordinates[0], e.coordinates[1], x, y, e.canvas);
-				e = undefined;
 				Whiteboard.execute(ev);
-				ev = undefined;
+				e = ev = undefined;
+				break;
+			}
+			i--;
+		}
+	},
+	
+	drawOval: function(x, y) {
+		var i = Whiteboard.events.length - 1;
+		while (i >= 0) {
+			var e = Whiteboard.events[i];
+			if (e.type === "beginshape") {
+				var sx = e.coordinates[0];
+				var sy = e.coordinates[1];
+				var wid = x-sx;
+				var hei = y-sy;
+				
+				var ev = new Oval(sx, sy, wid, hei, e.canvas);
+				Whiteboard.execute(ev);
+				e = ev = undefined;
 				break;
 			}
 			i--;

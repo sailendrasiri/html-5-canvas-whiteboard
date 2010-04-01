@@ -22,6 +22,7 @@ window.WhiteboardUi = {
 		pencil: 'pencil_active',
 		eraser: 'eraser_active',
 		rectangle: 'rectangle_active',
+		oval: 'oval_active',
 		button_pencil: 'button_pencil',
 		button_color: 'button_color',
 		button_eraser: 'button_eraser',
@@ -32,6 +33,7 @@ window.WhiteboardUi = {
 		button_animate: 'button_animate',
 		button_shape: 'button_shape',
 		button_rectangle: 'button_rectangle',
+		button_oval: 'button_oval',
 		input_color: 'color',
 		input_rotation: 'rotation',
 		shape_menu: 'shape_menu',
@@ -90,6 +92,11 @@ window.WhiteboardUi = {
 			WhiteboardUi.shapeMenu();
 			WhiteboardUi.activateRectangle();
 		});
+		WhiteboardUi.getElement('button_oval').mousedown(function() {
+			Whiteboard.setStrokeStyle(WhiteboardUi.getElement('input_color').attr("value"));
+			WhiteboardUi.shapeMenu();
+			WhiteboardUi.activateOval();
+		});
 	},
 	
 	getX: function(event) {
@@ -130,6 +137,8 @@ window.WhiteboardUi = {
 	
 	endPencilDraw: function (event) {
 		WhiteboardUi.canvasElement.unbind("mousemove");
+		WhiteboardUi.canvasElement.unbind("mouseup");
+		WhiteboardUi.canvasElement.unbind("mouseout");
 	},
 	
 	activateEraser: function(event) {
@@ -149,6 +158,8 @@ window.WhiteboardUi = {
 	
 	endErasing: function(event) {
 		WhiteboardUi.canvasElement.unbind("mousemove");
+		WhiteboardUi.canvasElement.unbind("mouseup");
+		WhiteboardUi.canvasElement.unbind("mouseout");
 	},
 	
 	zoomBar: function(event) {
@@ -242,6 +253,27 @@ window.WhiteboardUi = {
 	endRectangle: function(event) {
 		Whiteboard.drawRectangle(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
 		WhiteboardUi.canvasElement.unbind("mousemove");
+		WhiteboardUi.canvasElement.unbind("mouseup");
+	},
+	
+	activateOval: function(event) {
+		WhiteboardUi.changeTool();
+		WhiteboardUi.canvasElement.bind("mousedown", WhiteboardUi.beginOval);
+		WhiteboardUi.canvasElement.addClass(WhiteboardUi.elementConf.oval);
+	},
+	
+	beginOval: function(event) {
+		Whiteboard.beginShape(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
+	    WhiteboardUi.canvasElement.bind("mousemove", function(event) {
+	    	Whiteboard.drawOval(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
+	    });
+	    WhiteboardUi.canvasElement.bind("mouseup", WhiteboardUi.endOval);
+	},
+	
+	endOval: function(event) {
+		Whiteboard.drawOval(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
+		WhiteboardUi.canvasElement.unbind("mousemove");
+		WhiteboardUi.canvasElement.unbind("mouseup");
 	}
 	
 }
