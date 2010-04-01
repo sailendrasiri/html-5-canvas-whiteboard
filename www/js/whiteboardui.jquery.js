@@ -118,6 +118,7 @@ window.WhiteboardUi = {
 		WhiteboardUi.canvasElement.removeClass(WhiteboardUi.elementConf.pencil);
 		WhiteboardUi.canvasElement.removeClass(WhiteboardUi.elementConf.eraser);
 		WhiteboardUi.canvasElement.removeClass(WhiteboardUi.elementConf.rectangle);
+		WhiteboardUi.canvasElement.removeClass(WhiteboardUi.elementConf.oval);
 	},
 	
 	activatePencil: function(event) {
