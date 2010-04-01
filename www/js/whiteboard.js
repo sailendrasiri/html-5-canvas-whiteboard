@@ -221,7 +221,9 @@ window.Whiteboard = {
 	    		this.context.clearRect(0, 0, wid, hei);
 	    		this.context.drawImage(wbevent.canvas, 0, 0);
 	    	}
+	    	this.context.beginPath();
 	    	this.context.rect(sx, sy, ex-sx, ey-sy);
+	    	this.context.closePath();
 	    	this.context.stroke();
 	    } else if (type === "oval") {
 	    	var x = wbevent.coordinates[0];
