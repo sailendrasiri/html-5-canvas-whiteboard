@@ -375,6 +375,33 @@ window.Whiteboard = {
 	rotate: function(degree) {
 	    var e = new Rotate(degree);
 	    Whiteboard.execute(e);
+	},
+	
+	/*
+	This function redraws the entire canvas according to the events in events
+	*/
+	redraw: function() {
+		Whiteboard.context.clearRect(0,0,Whiteboard.canvas.width,Whiteboard.canvas.height);
+	    var redrawEvents = this.events;
+	    this.events = [];
+	    var i;
+	    for(i=0;i < redrawEvents.length; i++) {
+	        if(i === 0) {
+	            this.execute(redrawEvents[i], true);
+	        } else {
+	            this.execute(redrawEvents[i], false);
+	        }
+	    }
+	},
+	
+	/*
+	This removes the last event from this events and redraws
+	(it can be made more effective then to redraw but time is limited)
+	*/
+	undo: function() {
+	    console.log("undo");
+	    this.events.pop();
+	    this.redraw();
 	}
 	
 	/* === END ACTIONS === */
