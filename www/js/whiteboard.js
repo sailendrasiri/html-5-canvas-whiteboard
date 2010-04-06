@@ -387,9 +387,9 @@ window.Whiteboard = {
 	    var i;
 	    for(i=0;i < redrawEvents.length; i++) {
 	        if(i === 0) {
-	            this.execute(redrawEvents[i], true);
+	            this.execute(redrawEvents[i]);
 	        } else {
-	            this.execute(redrawEvents[i], false);
+	            this.execute(redrawEvents[i]);
 	        }
 	    }
 	},
@@ -400,7 +400,10 @@ window.Whiteboard = {
 	*/
 	undo: function() {
 	    console.log("undo");
-	    this.events.pop();
+	    reverseEvent = this.events.pop();
+	    console.log(reverseEvent.type);
+	    if(reverseEvent.type === '') {
+	    }
 	    this.redraw();
 	}
 	
