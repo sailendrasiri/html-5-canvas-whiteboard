@@ -384,13 +384,9 @@ window.Whiteboard = {
 		Whiteboard.context.clearRect(0,0,Whiteboard.canvas.width,Whiteboard.canvas.height);
 	    var redrawEvents = this.events;
 	    this.events = [];
-	    var i;
-	    for(i=0;i < redrawEvents.length; i++) {
-	        if(i === 0) {
-	            this.execute(redrawEvents[i]);
-	        } else {
-	            this.execute(redrawEvents[i]);
-	        }
+	    
+	    for(var i=0;i < redrawEvents.length; i++) {
+	        this.execute(redrawEvents[i]);
 	    }
 	},
 	
@@ -399,12 +395,9 @@ window.Whiteboard = {
 	(it can be made more effective then to redraw but time is limited)
 	*/
 	undo: function() {
-	    console.log("undo");
 	    reverseEvent = this.events.pop();
 	    console.log(reverseEvent.type);
-	    if(reverseEvent.type === '') {
-	    }
-	    this.redraw();
+	   	this.redraw();
 	}
 	
 	/* === END ACTIONS === */
