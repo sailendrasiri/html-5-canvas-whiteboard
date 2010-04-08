@@ -50,9 +50,14 @@ window.WhiteboardUi = {
 		button_shape:		null,
 		button_rectangle:	null,
 		button_oval:		null,
+		button_saveas:		null,
+		button_savepng:		null,
+		button_savejpeg:	null,
+		button_savebmp:		null,
 		input_color:		null,
 		input_rotation:		null,
 		shape_menu:			null,
+		saveas_menu:		null,
 		zoom_element:		null,
 		zoom_section:		null,
 		zoom_amount:		null,
@@ -60,8 +65,9 @@ window.WhiteboardUi = {
 		zoom_bar:			null,
 	},
 	activeElems: {
-		shape_menu:	false,
-		zoom:		false,
+		shape_menu:		false,
+		saveas_menu:	false,
+		zoom:			false,
 	},
 	
 	init: function(canvasElement, elemconf) {
@@ -122,6 +128,16 @@ window.WhiteboardUi = {
 			Whiteboard.setStrokeStyle(WhiteboardUi.getElement('input_color').attr("value"));
 			WhiteboardUi.shapeMenu();
 			WhiteboardUi.activateOval();
+		});
+		WhiteboardUi.getElement('button_saveas').mouseup(WhiteboardUi.saveasMenu);
+		WhiteboardUi.getElement('button_savepng').mouseup(function() {
+			Whiteboard.saveAs('png');
+		});
+		WhiteboardUi.getElement('button_savejpeg').mouseup(function() {
+			Whiteboard.saveAs('jpeg');
+		});
+		WhiteboardUi.getElement('button_savebmp').mouseup(function() {
+			Whiteboard.saveAs('bmp');
 		});
 	},
 	
@@ -301,7 +317,31 @@ window.WhiteboardUi = {
 		Whiteboard.drawOval(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
 		WhiteboardUi.canvasElement.unbind("mousemove");
 		WhiteboardUi.canvasElement.unbind("mouseup");
-	}
+	},
+	
+	saveasMenu: function(event) {
+		var menu = WhiteboardUi.getElement('saveas_menu');
+		if (WhiteboardUi.activeElems.saveas_menu === false) {
+			WhiteboardUi.activeElems.saveas_menu = true;
+			var wid = menu.css('width');
+			var hei = menu.css('height');
+			menu.css('width', '0');
+			menu.css('height', '0');
+			menu.css('display', 'block');
+			menu.animate({ 
+			    width: wid,
+			    height: hei
+			}, 150);
+		} else {
+			WhiteboardUi.activeElems.saveas_menu = false;
+			menu.animate({ 
+			    opacity: 0
+			}, 150, function() {
+				menu.css('display', 'none');
+				menu.css('opacity', '1');
+			});
+		}
+	},
 	
 }
 

@@ -46,7 +46,7 @@
 	margin: 2px 0 0 0;
 }
 
-#shape_menu {
+#shape_menu, #saveas_menu {
 	display: none;
 	position: absolute;
 	border: 1px solid;

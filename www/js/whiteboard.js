@@ -262,6 +262,27 @@ window.Whiteboard = {
 				height: this.canvas.height/this.canvas.offsetHeight};
 	},
 	
+	saveAs: function(type) {
+		if (type === undefined) {
+			type = "png";
+		}
+		type = type.toLowerCase();
+		
+		var img = null;
+		if (type == 'jpg' || type == 'jpeg') {
+			img = Canvas2Image.saveAsJPEG(Whiteboard.canvas, true);
+		} else if (type == 'bmp') {
+			img = Canvas2Image.saveAsBMP(Whiteboard.canvas, true);
+		} else {
+			img = Canvas2Image.saveAsPNG(Whiteboard.canvas, true);
+		}
+		var options = 'width=' + Whiteboard.canvas.width + ',' +
+			'height=' + Whiteboard.canvas.height;
+		var win = window.open('','Save image',options);
+		win.innerHTML = "";
+		win.document.body.appendChild(img);
+	},
+	
 	
 	/* === BEGIN ACTIONS === */
 	
