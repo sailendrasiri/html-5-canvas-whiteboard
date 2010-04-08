@@ -131,12 +131,15 @@ window.WhiteboardUi = {
 		});
 		WhiteboardUi.getElement('button_saveas').mouseup(WhiteboardUi.saveasMenu);
 		WhiteboardUi.getElement('button_savepng').mouseup(function() {
+			WhiteboardUi.saveasMenu();
 			Whiteboard.saveAs('png');
 		});
 		WhiteboardUi.getElement('button_savejpeg').mouseup(function() {
+			WhiteboardUi.saveasMenu();
 			Whiteboard.saveAs('jpeg');
 		});
 		WhiteboardUi.getElement('button_savebmp').mouseup(function() {
+			WhiteboardUi.saveasMenu();
 			Whiteboard.saveAs('bmp');
 		});
 	},
