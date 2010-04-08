@@ -26,6 +26,7 @@
 function BeginPath(x, y) {
     this.coordinates = [x, y];
     this.type="beginpath";
+	this.time = new Date().getTime();
 }
 /* Begin shape event */
 function BeginShape(x, y, canvas) {
@@ -37,6 +38,7 @@ function BeginShape(x, y, canvas) {
 /* End path event */
 function ClosePath() {
     this.type = "closepath";
+	this.time = new Date().getTime();
 }
 /* Point draw event */
 function DrawPathToPoint(x, y) {
