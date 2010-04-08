@@ -79,6 +79,7 @@ function Zoom(factor) {
     this.factor = factor;
     this.time = new Date().getTime();
 }
+/* Restore event */
 function Restore(canvas) {
 	this.type = "restore";
 	if (canvas !== undefined) {
@@ -136,15 +137,8 @@ window.Whiteboard = {
 		this.setStrokeStyle(col);
 	},
 	
-	execute: function(wbevent, firstexecute) {
+	execute: function(wbevent) {
 	    var type = wbevent.type;
-	    //console.log(type);
-	    // do this for every event
-	    if(firstexecute || firstexecute === undefined) {
-	        wbevent.time = new Date().getTime();
-	        this.events.push(wbevent);
-	        //console.log("firstexecute");
-	    }
 	    
 	    if(type === "beginpath") {
 	        this.context.beginPath();
@@ -296,11 +290,11 @@ window.Whiteboard = {
 	
 	animatenext: function() {
 	    if(Whiteboard.animationind === 0) {
-	        Whiteboard.execute(Whiteboard.events[0], false);
+	        Whiteboard.execute(Whiteboard.events[0]);
 	        Whiteboard.animationind++;   
 	    }
 	    
-	    Whiteboard.execute(Whiteboard.events[Whiteboard.animationind], false);
+	    Whiteboard.execute(Whiteboard.events[Whiteboard.animationind]);
 	    Whiteboard.animationind++;
 	    
 	    if (Whiteboard.animationind < Whiteboard.events.length - 1) {
