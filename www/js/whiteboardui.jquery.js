@@ -64,12 +64,27 @@ window.WhiteboardUi = {
 		zoom_slider:		null,
 		zoom_bar:			null,
 	},
+	/**
+	 * Defines which normally hidden elements 
+	 * are currently showing.
+	 */
 	activeElems: {
 		shape_menu:		false,
 		saveas_menu:	false,
 		zoom:			false,
 	},
 	
+	/**
+	 * Initializes the Whiteboard UI script.
+	 * 
+	 * @param canvasElement The canvas jQuery element.
+	 * @param elemconf The element configuration array.
+	 * This array can contain any of the elements defined
+	 * in WhiteboardUi.elemConf. If the element names differ
+	 * from the default array indexes, they should be given
+	 * in this array. Only the differing elements should be
+	 * defined.
+	 */
 	init: function(canvasElement, elemconf) {
 		this.canvasElement = canvasElement;
 		Whiteboard.init(canvasElement.attr("id"));
@@ -83,6 +98,15 @@ window.WhiteboardUi = {
 		this.addListeners();
 	},
 	
+	/**
+	 * Resolves the element name from WhiteboardUi.elemConf.
+	 * If index defined by ind parameter can be found in that
+	 * array and the array's value is returned. Otherwise
+	 * the ind parameter itself is returned.
+	 * 
+	 * @param ind The element's index name in WhiteboardUi.elemConf
+	 * @return The elements correct name
+	 */
 	getElementName: function(ind) {
 		if (WhiteboardUi.elementConf[ind] === undefined || 
 				WhiteboardUi.elementConf[ind] === null) {
@@ -91,10 +115,22 @@ window.WhiteboardUi = {
 		return WhiteboardUi.elementConf[ind];
 	},
 	
+	/**
+	 * Resolves the jQuery element with the defined id which
+	 * is resolved by WhiteboardUi.getElementName function.
+	 * 
+	 * @param ind The element's index name in WhiteboardUi.elemConf
+	 * or the wanted id name that's not included in that array.
+	 * @return The jQuery element with the resolved id
+	 */
 	getElement: function(ind) {
 		return $('#' + WhiteboardUi.getElementName(ind));
 	},
 	
+	/**
+	 * Adds all the UI's needed action listeners for buttons
+	 * and other UI elements.
+	 */
 	addListeners: function() {
 		WhiteboardUi.getElement('button_pencil').mousedown(function() {
 			Whiteboard.setStrokeStyle(WhiteboardUi.getElement('input_color').attr("value"));
@@ -144,6 +180,14 @@ window.WhiteboardUi = {
 		});
 	},
 	
+	/**
+	 * Resolves the X coordinate of the given event inside
+	 * the canvas element.
+	 * 
+	 * @param event The event that has been executed.
+	 * @return The x coordinate of the event inside the 
+	 * canvas element.
+	 */
 	getX: function(event) {
 		var cssx = (event.clientX - this.canvasElement.offset().left);
 	    var xrel = Whiteboard.getRelative().width;
@@ -151,6 +195,14 @@ window.WhiteboardUi = {
 	    return canvasx;
 	},
 	
+	/**
+	 * Resolves the Y coordinate of the given event inside
+	 * the canvas element.
+	 * 
+	 * @param event The event that has been executed.
+	 * @return The y coordinate of the event inside the 
+	 * canvas element.
+	 */
 	getY: function(event) {
 	    var cssy = (event.clientY - this.canvasElement.offset().top);
 	    var yrel = Whiteboard.getRelative().height;
@@ -158,6 +210,11 @@ window.WhiteboardUi = {
 	    return canvasy;
 	},
 	
+	/**
+	 * Returns the canvas element to its default definition
+	 * without any extra classes defined by any of the selected
+	 * UI tools.
+	 */
 	changeTool: function() {
 		WhiteboardUi.canvasElement.unbind();
 		WhiteboardUi.canvasElement.removeClass(WhiteboardUi.getElementName('pencil_active'));
@@ -166,12 +223,27 @@ window.WhiteboardUi = {
 		WhiteboardUi.canvasElement.removeClass(WhiteboardUi.getElementName('oval_active'));
 	},
 	
+	/**
+	 * Activates pencil tool and adds pencil_active class
+	 * to canvas element.
+	 * 
+	 * @param event The event that has been executed to perform
+	 * this action
+	 */
 	activatePencil: function(event) {
 		WhiteboardUi.changeTool();
 		WhiteboardUi.canvasElement.bind("mousedown", WhiteboardUi.beginPencilDraw);
 		WhiteboardUi.canvasElement.addClass(WhiteboardUi.getElementName('pencil_active'));
 	},
 
+	/**
+	 * Begins the pencil draw after user action that is usually
+	 * mouse down. This should be executed on mousedown event
+	 * after activating the pen tool.
+	 * 
+	 * @param event The event that has been executed to perform
+	 * this action
+	 */
 	beginPencilDraw: function(event) {
 	    Whiteboard.beginPencilDraw(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
 	    WhiteboardUi.canvasElement.bind("mousemove", function(event) {
@@ -181,18 +253,41 @@ window.WhiteboardUi = {
 	    WhiteboardUi.canvasElement.bind("mouseout", WhiteboardUi.endPencilDraw);
 	},
 	
+	/**
+	 * Ends pencil draw which means that mouse moving won't
+	 * be registered as drawing action anymore. This should be
+	 * executed on mouseup after user has started drawing.
+	 * 
+	 * @param event The event that has been executed to perform
+	 * this action
+	 */
 	endPencilDraw: function (event) {
 		WhiteboardUi.canvasElement.unbind("mousemove");
 		WhiteboardUi.canvasElement.unbind("mouseup");
 		WhiteboardUi.canvasElement.unbind("mouseout");
 	},
 	
+	/**
+	 * Activates erasing tool and adds eraser_active class
+	 * to canvas element.
+	 * 
+	 * @param event The event that has been executed to perform
+	 * this action
+	 */
 	activateEraser: function(event) {
 		WhiteboardUi.changeTool();
 		WhiteboardUi.canvasElement.bind("mousedown", WhiteboardUi.beginErasing);
 		WhiteboardUi.canvasElement.addClass(WhiteboardUi.getElementName('eraser_active'));
 	},
 
+	/**
+	 * Begins the erasing action after user action that is usually
+	 * mouse down. This should be executed on mousedown event
+	 * after activating the erasing tool.
+	 * 
+	 * @param event The event that has been executed to perform
+	 * this action
+	 */
 	beginErasing: function(event) {
 	    Whiteboard.beginErasing(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
 	    WhiteboardUi.canvasElement.bind("mousemove", function(event) {
@@ -202,12 +297,27 @@ window.WhiteboardUi = {
 	    WhiteboardUi.canvasElement.bind("mouseout", WhiteboardUi.endErasing);
 	},
 	
+	/**
+	 * Ends erasing which means that mouse moving won't
+	 * be registered as erasing action anymore. This should be
+	 * executed on mouseup after user has started erasing.
+	 * 
+	 * @param event The event that has been executed to perform
+	 * this action
+	 */
 	endErasing: function(event) {
 		WhiteboardUi.canvasElement.unbind("mousemove");
 		WhiteboardUi.canvasElement.unbind("mouseup");
 		WhiteboardUi.canvasElement.unbind("mouseout");
 	},
 	
+	/**
+	 * Shows or hides the zoom element depending on its
+	 * current state.
+	 * 
+	 * @param event The event that has been executed to perform
+	 * this action
+	 */
 	zoomBar: function(event) {
 		var zoom = WhiteboardUi.getElement('zoom_element');
 		if (WhiteboardUi.activeElems.zoom === false) {
@@ -228,7 +338,14 @@ window.WhiteboardUi = {
 		}
 	},
 	
-	activateZoom: function(event) {
+	/**
+	 * Activates the zooming element to listen the dragging
+	 * action that user performs on the zoom slider element.
+	 * 
+	 * @param event The event that has been executed to perform
+	 * this action
+	 */
+	activateZoom: function() {
 		var slider = WhiteboardUi.getElement('zoom_slider');
 		var zoomSec = WhiteboardUi.getElement('zoom_section');
 		var height = zoomSec.height() - slider.height();
@@ -250,6 +367,12 @@ window.WhiteboardUi = {
 		});
 	},
 	
+	/**
+	 * Performs the zoom defined by the zoom slider.
+	 * 
+	 * @param event The event that has been executed to perform
+	 * this action
+	 */
 	performZoom: function(event) {
 		var zoom = parseInt(WhiteboardUi.getElement('zoom_amount').html()) / 100;
 		
@@ -258,6 +381,13 @@ window.WhiteboardUi = {
 		WhiteboardUi.zoomrel = 1 + zoom;
 	},
 	
+	/**
+	 * Opens or hides the shape selection menu depending
+	 * on its current state.
+	 * 
+	 * @param event The event that has been executed to perform
+	 * this action
+	 */
 	shapeMenu: function(event) {
 		var menu = WhiteboardUi.getElement('shape_menu');
 		if (WhiteboardUi.activeElems.shape_menu === false) {
@@ -282,12 +412,28 @@ window.WhiteboardUi = {
 		}
 	},
 	
+	/**
+	 * Activates the rectangle drawing tool.
+	 * 
+	 * @param event The event that has been executed to perform
+	 * this action
+	 */
 	activateRectangle: function(event) {
 		WhiteboardUi.changeTool();
 		WhiteboardUi.canvasElement.bind("mousedown", WhiteboardUi.beginRectangle);
 		WhiteboardUi.canvasElement.addClass(WhiteboardUi.getElementName('rectangle_active'));
 	},
 	
+	/**
+	 * Begins rectangle drawing at the current point. This also
+	 * adds mousemove event listener to the canvas element
+	 * while user keeps the mouse down. After every mousemove
+	 * event the rectangle is redrawn depending on the new
+	 * mouse position.
+	 * 
+	 * @param event The event that has been executed to perform
+	 * this action
+	 */
 	beginRectangle: function(event) {
 		Whiteboard.beginShape(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
 	    WhiteboardUi.canvasElement.bind("mousemove", function(event) {
@@ -296,18 +442,41 @@ window.WhiteboardUi = {
 		WhiteboardUi.canvasElement.bind("mouseup", WhiteboardUi.endRectangle);
 	},
 	
+	/**
+	 * Ends rectangle drawing after user releases the mouse
+	 * button after starting the drawing.
+	 * 
+	 * @param event The event that has been executed to perform
+	 * this action
+	 */
 	endRectangle: function(event) {
 		Whiteboard.drawRectangle(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
 		WhiteboardUi.canvasElement.unbind("mousemove");
 		WhiteboardUi.canvasElement.unbind("mouseup");
 	},
 	
+	/**
+	 * Activates the oval drawing tool.
+	 * 
+	 * @param event The event that has been executed to perform
+	 * this action
+	 */
 	activateOval: function(event) {
 		WhiteboardUi.changeTool();
 		WhiteboardUi.canvasElement.bind("mousedown", WhiteboardUi.beginOval);
 		WhiteboardUi.canvasElement.addClass(WhiteboardUi.getElementName('oval_active'));
 	},
 	
+	/**
+	 * Begins oval drawing at the current point. This also
+	 * adds mousemove event listener to the canvas element
+	 * while user keeps the mouse down. After every mousemove
+	 * event the oval is redrawn depending on the new
+	 * mouse position.
+	 * 
+	 * @param event The event that has been executed to perform
+	 * this action
+	 */
 	beginOval: function(event) {
 		Whiteboard.beginShape(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
 	    WhiteboardUi.canvasElement.bind("mousemove", function(event) {
@@ -316,12 +485,26 @@ window.WhiteboardUi = {
 	    WhiteboardUi.canvasElement.bind("mouseup", WhiteboardUi.endOval);
 	},
 	
+	/**
+	 * Ends oval drawing after user releases the mouse
+	 * button after starting the drawing.
+	 * 
+	 * @param event The event that has been executed to perform
+	 * this action
+	 */
 	endOval: function(event) {
 		Whiteboard.drawOval(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
 		WhiteboardUi.canvasElement.unbind("mousemove");
 		WhiteboardUi.canvasElement.unbind("mouseup");
 	},
 	
+	/**
+	 * Opens or hides the save as menu depending on its
+	 * current state.
+	 * 
+	 * @param event The event that has been executed to perform
+	 * this action
+	 */
 	saveasMenu: function(event) {
 		var menu = WhiteboardUi.getElement('saveas_menu');
 		if (WhiteboardUi.activeElems.saveas_menu === false) {

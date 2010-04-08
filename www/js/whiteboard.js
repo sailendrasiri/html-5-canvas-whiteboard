@@ -115,7 +115,12 @@ window.Whiteboard = {
 	
 	drawColor: '#000000',
 	
-	
+	/**
+	 * Initializes the script by setting the default
+	 * values for parameters of the class.
+	 * 
+	 * @param canvasid The id of the canvas element used
+	 */
 	init: function(canvasid) {
 		// set the canvas width and height
 		// the offsetWidth and Height is default width and height
@@ -137,6 +142,13 @@ window.Whiteboard = {
 		this.setStrokeStyle(col);
 	},
 	
+	/**
+	 * Executes the event that matches the given event
+	 * object
+	 * 
+	 * @param wbevent The event object to be executed.
+	 * This object should be one of the model's event objects.
+	 */
 	execute: function(wbevent) {
 	    var type = wbevent.type;
 	    
@@ -253,11 +265,27 @@ window.Whiteboard = {
 	    }
 	},
 	
+	/**
+	 * Resolves the relative width and height of the canvas
+	 * element. Relative parameters can vary depending on the
+	 * zoom. Both are equal to 1 if no zoom is encountered.
+	 * 
+	 * @return An array containing the relative width as first
+	 * element and relative height as second.
+	 */
 	getRelative: function() {
 		return {width: this.canvas.width/this.canvas.offsetWidth,
 				height: this.canvas.height/this.canvas.offsetHeight};
 	},
 	
+	/**
+	 * Opens a new window and writes the canvas image data
+	 * to an element of type "img" in the new windows html body.
+	 * The image is written in the specified image form.
+	 * 
+	 * @param type The output image type.
+	 * Alternatives: png, jpg/jpeg, bmp
+	 */
 	saveAs: function(type) {
 		if (type === undefined) {
 			type = "png";
@@ -282,12 +310,22 @@ window.Whiteboard = {
 	
 	/* === BEGIN ACTIONS === */
 	
+	/**
+	 * Starts the animation action in the canvas. This clears
+	 * the whole canvas and starts to execute actions from
+	 * the action stack by calling Whiteboard.animatenext().
+	 */
 	animate: function() {
 		Whiteboard.animationind = 0;
 		Whiteboard.context.clearRect(0,0,Whiteboard.canvas.width,Whiteboard.canvas.height);
 		Whiteboard.animatenext();
 	},
 	
+	/**
+	 * This function animates the next event in the event 
+	 * stack and waits for the amount of time between the 
+	 * current and next event before calling itself again.
+	 */
 	animatenext: function() {
 	    if(Whiteboard.animationind === 0) {
 	        Whiteboard.execute(Whiteboard.events[0]);
@@ -304,26 +342,63 @@ window.Whiteboard = {
 	    }
 	},
 	
+	/**
+	 * Begins a drawing path.
+	 * 
+	 * @param x Coordinate x of the path starting point
+	 * @param y Coordinate y of the path starting point
+	 */
 	beginPencilDraw: function(x, y) {
 	    var e = new BeginPath(x, y);
 	    Whiteboard.execute(e);
 	},
 	
+	/**
+	 * Draws a path from the path starting point to the
+	 * point indicated by the given parameters.
+	 * 
+	 * @param x Coordinate x of the path ending point
+	 * @param y Coordinate y of the path ending point
+	 */
 	pencilDraw: function(x, y) {
 	    var e = new DrawPathToPoint(x, y);
 	    Whiteboard.execute(e);
 	},
 	
+	/**
+	 * Begins erasing path.
+	 * 
+	 * @param x Coordinate x of the path starting point
+	 * @param y Coordinate y of the path starting point
+	 */
 	beginErasing: function(x, y) {
 	    var e = new BeginPath(x, y);
 	    Whiteboard.execute(e);
 	},
 	
+	/**
+	 * Erases the point indicated by the given coordinates.
+	 * Actually this doesn't take the path starting point
+	 * into account but erases a rectangle at the given
+	 * coordinates with width and height specified in the
+	 * Erase object.
+	 * 
+	 * @param x Coordinate x of the path ending point
+	 * @param y Coordinate y of the path ending point
+	 */
 	erasePoint: function(x, y) {
 	    var e = new Erase(x, y);
 	    Whiteboard.execute(e);
 	},
 	
+	/**
+	 * Begins shape drawing. The shape starting point
+	 * should be the point where user click the canvas the
+	 * first time after choosing the shape tool.
+	 * 
+	 * @param x Coordinate x of the shape starting point
+	 * @param y Coordinate y of the shape starting point
+	 */
 	beginShape: function(x, y) {
         var tmp = document.createElement("canvas");
         var tmpcnv = tmp.getContext('2d');
@@ -334,6 +409,13 @@ window.Whiteboard = {
 		Whiteboard.execute(e);
 	},
 	
+	/**
+	 * Draws a rectangle that has opposite corner to the
+	 * shape starting point at the given point.
+	 * 
+	 * @param x Coordinate x of the shape ending point
+	 * @param y Coordinate y of the shape ending point
+	 */
 	drawRectangle: function(x, y) {
 		var i = Whiteboard.events.length - 1;
 		while (i >= 0) {
@@ -348,6 +430,15 @@ window.Whiteboard = {
 		}
 	},
 	
+	/**
+	 * Draws an oval that has opposite corner to the
+	 * shape starting point at the given point. The oval
+	 * drawing can be visualized by the same way as drawing
+	 * a rectangle but the corners are round.
+	 * 
+	 * @param x Coordinate x of the shape ending point
+	 * @param y Coordinate y of the shape ending point
+	 */
 	drawOval: function(x, y) {
 		var i = Whiteboard.events.length - 1;
 		while (i >= 0) {
@@ -367,6 +458,13 @@ window.Whiteboard = {
 		}
 	},
 	
+	/**
+	 * Sets stroke style for the canvas. Stroke
+	 * style defines the color with which every
+	 * stroke should be drawn on the canvas.
+	 * 
+	 * @param color The wanted stroke color
+	 */
 	setStrokeStyle: function(color) {
 		if (color != Whiteboard.drawColor) {
 			var e = new StrokeStyle(color);
@@ -374,28 +472,50 @@ window.Whiteboard = {
 		}
 	},
 	
+	/**
+	 * Zooms in the canvas 50% of the current canvas size
+	 * resulting a 150% image size.
+	 */
 	zoomin: function() {
 	    var e = new Zoom(1.5);
 	    Whiteboard.execute(e);
 	},
 
+	/**
+	 * Zooms out the canvas 50% of the current canvas size
+	 * resulting a 50% image size.
+	 */
 	zoomout: function() {
 	    var e = new Zoom(0.5);
 	    Whiteboard.execute(e);
 	},
 	
+	/**
+	 * Zooms the canvas amount specified by the factor
+	 * parameter.
+	 * 
+	 * @param factor The zoom factor. > 1 if zooming in
+	 * and < 1 if zooming out.
+	 */
 	zoom: function(factor) {
 	    var e = new Zoom(factor);
 	    Whiteboard.execute(e);
 	},
 
+	/**
+	 * Rotates the canvas by the degrees defined by
+	 * the degree parameter.
+	 * 
+	 * @param degree The degree of the rotation event.
+	 */
 	rotate: function(degree) {
 	    var e = new Rotate(degree);
 	    Whiteboard.execute(e);
 	},
 	
-	/*
-	This function redraws the entire canvas according to the events in events
+	/**
+	 * This function redraws the entire canvas 
+	 * according to the events in events.
 	*/
 	redraw: function() {
 		Whiteboard.context.clearRect(0,0,Whiteboard.canvas.width,Whiteboard.canvas.height);
@@ -407,9 +527,10 @@ window.Whiteboard = {
 	    }
 	},
 	
-	/*
-	This removes the last event from this events and redraws
-	(it can be made more effective then to redraw but time is limited)
+	/**
+	 * This removes the last event from this events 
+	 * and redraws (it can be made more 
+	 * effective then to redraw but time is limited)
 	*/
 	undo: function() {
 	    reverseEvent = this.events.pop();
