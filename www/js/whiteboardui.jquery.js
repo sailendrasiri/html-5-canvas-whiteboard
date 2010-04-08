@@ -18,51 +18,75 @@ window.WhiteboardUi = {
 	
 	zoomrel: 1,
 	canvasElement: null, // jQuery element for canvas
+	/**
+	 * The default ids and classes for the element
+	 * configurations are the index names used in this
+	 * array.
+	 * 
+	 * If names or classes have different names, they
+	 * should be defined in the script initialization,
+	 * that is WhiteboardUi.init() function.
+	 * 
+	 * The purpose of this list is only to show what
+	 * element definitions this scripts uses.
+	 */
 	elementConf: {
-		pencil: 'pencil_active',
-		eraser: 'eraser_active',
-		rectangle: 'rectangle_active',
-		oval: 'oval_active',
-		button_pencil: 'button_pencil',
-		button_color: 'button_color',
-		button_eraser: 'button_eraser',
-		button_zoomin: 'button_zoomin',
-		button_zoomout: 'button_zoomout',
-		button_zoom: 'button_zoom',
-		button_rotate: 'button_rotate',
-		button_animate: 'button_animate',
-		button_shape: 'button_shape',
-		button_rectangle: 'button_rectangle',
-		button_oval: 'button_oval',
-		input_color: 'color',
-		input_rotation: 'rotation',
-		shape_menu: 'shape_menu',
-		zoom_element: 'zoom',
-		zoom_section: 'zoomsection',
-		zoom_amount: 'zoomamount',
-		zoom_slider: 'zoomslider',
-		zoom_bar: 'zoombar',
+		// Classes
+		pencil_active:		null,
+		eraser_active:		null,
+		rectangle_active:	null,
+		oval_active:		null,
+		
+		// Element ids
+		button_pencil:		null,
+		button_color:		null,
+		button_eraser:		null,
+		button_zoomin:		null,
+		button_zoomout:		null,
+		button_zoom:		null,
+		button_rotate:		null,
+		button_animate:		null,
+		button_undo:		null,
+		button_shape:		null,
+		button_rectangle:	null,
+		button_oval:		null,
+		input_color:		null,
+		input_rotation:		null,
+		shape_menu:			null,
+		zoom_element:		null,
+		zoom_section:		null,
+		zoom_amount:		null,
+		zoom_slider:		null,
+		zoom_bar:			null,
 	},
 	activeElems: {
-		shape_menu: false,
-		zoom: false,
+		shape_menu:	false,
+		zoom:		false,
 	},
 	
-	init: function(canvasElement, conf) {
+	init: function(canvasElement, elemconf) {
 		this.canvasElement = canvasElement;
 		Whiteboard.init(canvasElement.attr("id"));
-		if (conf !== undefined) {
+		if (elemconf !== undefined) {
 			for (var i in this.elementConf) {
-				if (conf.i !== undefined) {
-					this.elementConf.i = conf.i;
+				if (elemconf.i !== undefined) {
+					this.elementConf.i = elemconf.i;
 				}
 			}
 		}
 		this.addListeners();
 	},
 	
+	getElementName: function(ind) {
+		if (WhiteboardUi.elementConf[ind] === undefined || 
+				WhiteboardUi.elementConf[ind] === null) {
+			return ind;
+		}
+		return WhiteboardUi.elementConf[ind];
+	},
+	
 	getElement: function(ind) {
-		return $('#' + WhiteboardUi.elementConf[ind]);
+		return $('#' + WhiteboardUi.getElementName(ind));
 	},
 	
 	addListeners: function() {
@@ -117,16 +141,16 @@ window.WhiteboardUi = {
 	
 	changeTool: function() {
 		WhiteboardUi.canvasElement.unbind();
-		WhiteboardUi.canvasElement.removeClass(WhiteboardUi.elementConf.pencil);
-		WhiteboardUi.canvasElement.removeClass(WhiteboardUi.elementConf.eraser);
-		WhiteboardUi.canvasElement.removeClass(WhiteboardUi.elementConf.rectangle);
-		WhiteboardUi.canvasElement.removeClass(WhiteboardUi.elementConf.oval);
+		WhiteboardUi.canvasElement.removeClass(WhiteboardUi.getElementName('pencil_active'));
+		WhiteboardUi.canvasElement.removeClass(WhiteboardUi.getElementName('eraser_active'));
+		WhiteboardUi.canvasElement.removeClass(WhiteboardUi.getElementName('rectangle_active'));
+		WhiteboardUi.canvasElement.removeClass(WhiteboardUi.getElementName('oval_active'));
 	},
 	
 	activatePencil: function(event) {
 		WhiteboardUi.changeTool();
 		WhiteboardUi.canvasElement.bind("mousedown", WhiteboardUi.beginPencilDraw);
-		WhiteboardUi.canvasElement.addClass(WhiteboardUi.elementConf.pencil);
+		WhiteboardUi.canvasElement.addClass(WhiteboardUi.getElementName('pencil_active'));
 	},
 
 	beginPencilDraw: function(event) {
@@ -147,7 +171,7 @@ window.WhiteboardUi = {
 	activateEraser: function(event) {
 		WhiteboardUi.changeTool();
 		WhiteboardUi.canvasElement.bind("mousedown", WhiteboardUi.beginErasing);
-		WhiteboardUi.canvasElement.addClass(WhiteboardUi.elementConf.eraser);
+		WhiteboardUi.canvasElement.addClass(WhiteboardUi.getElementName('eraser_active'));
 	},
 
 	beginErasing: function(event) {
@@ -242,7 +266,7 @@ window.WhiteboardUi = {
 	activateRectangle: function(event) {
 		WhiteboardUi.changeTool();
 		WhiteboardUi.canvasElement.bind("mousedown", WhiteboardUi.beginRectangle);
-		WhiteboardUi.canvasElement.addClass(WhiteboardUi.elementConf.rectangle);
+		WhiteboardUi.canvasElement.addClass(WhiteboardUi.getElementName('rectangle_active'));
 	},
 	
 	beginRectangle: function(event) {
@@ -262,7 +286,7 @@ window.WhiteboardUi = {
 	activateOval: function(event) {
 		WhiteboardUi.changeTool();
 		WhiteboardUi.canvasElement.bind("mousedown", WhiteboardUi.beginOval);
-		WhiteboardUi.canvasElement.addClass(WhiteboardUi.elementConf.oval);
+		WhiteboardUi.canvasElement.addClass(WhiteboardUi.getElementName('oval_active'));
 	},
 	
 	beginOval: function(event) {

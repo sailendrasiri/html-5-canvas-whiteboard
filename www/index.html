@@ -21,7 +21,7 @@ $(document).ready(function(){
 <div id="container">
     <div id="tools">
         <button id="button_pencil" type="button" id="drawpolyline">pencil</button>
-        <input id="color" type="text" name="color" size="7" value="#000000" maxlength="7" />
+        <input id="input_color" type="text" name="color" size="7" value="#000000" maxlength="7" />
         <button id="button_color" type="button">choose color</button>
         <button id="button_eraser" type="button">eraser</button>
 	    <div>
@@ -33,7 +33,7 @@ $(document).ready(function(){
 	    </div>
         <button id="button_zoom" type="button">Zoom</button>
         <button id="button_rotate" type="button">rotate</button>
-        <input id="rotation" type="text" name="color" size="3" value="90" maxlength="3" />
+        <input id="input_rotation" type="text" name="rotation" size="3" value="90" maxlength="3" />
         <span>degrees</span>
         <button id="button_animate" type="button">animate</button>
         <button id="button_undo" type="button" onmousedown="Whiteboard.undo()">undo</button>
@@ -43,11 +43,11 @@ $(document).ready(function(){
 	        <canvas id="canvas"></canvas>
 	    </div>
 	</div><!-- /drawsection -->
-    <div id="zoom">
-    	<div id="zoomamount">0%</div>
-		<div id="zoomsection">
-	    	<div id="zoombar"></div>
-	    	<div id="zoomslider"></div>
+    <div id="zoom_element">
+    	<div id="zoom_amount">0%</div>
+		<div id="zoom_section">
+	    	<div id="zoom_bar"></div>
+	    	<div id="zoom_slider"></div>
 	    </div>
 	</div>
 </div> <!-- /container -->

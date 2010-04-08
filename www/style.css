@@ -56,7 +56,7 @@
 	padding: 5px;
 }
 
-#zoom {
+#zoom_element {
 	z-index: 100;
 	display: none;
 	position: absolute;
@@ -67,7 +67,7 @@
 	border: 1px solid #cccccc;
 }
 
-#zoom #zoomamount {
+#zoom_element #zoom_amount {
 	position: absolute;
 	margin-top: -21px;
 	height: 20px;
@@ -76,14 +76,14 @@
 	background-color: #ffffff;
 }
 
-#zoom #zoomsection {
+#zoom_element #zoom_section {
 	position: absolute;
 	background-color: #ffffff;	
 	width: 50px;
 	height: 100%;
 }
 
-#zoom #zoomsection #zoombar {
+#zoom_element #zoom_section #zoom_bar {
 	position: absolute;
 	margin-left: 20px;
 	width: 10px;
@@ -91,7 +91,7 @@
 	background-color: #cccccc;
 }
 
-#zoom #zoomsection #zoomslider {
+#zoom_element #zoom_section #zoom_slider {
 	z-index: 105;
 	position: absolute;
 	margin: 0 auto;
