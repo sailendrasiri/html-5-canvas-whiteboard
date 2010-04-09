@@ -62,7 +62,7 @@ window.WhiteboardUi = {
 		zoom_section:		null,
 		zoom_amount:		null,
 		zoom_slider:		null,
-		zoom_bar:			null,
+		zoom_bar:			null
 	},
 	/**
 	 * Defines which normally hidden elements 
@@ -71,7 +71,7 @@ window.WhiteboardUi = {
 	activeElems: {
 		shape_menu:		false,
 		saveas_menu:	false,
-		zoom:			false,
+		zoom:			false
 	},
 	
 	/**
@@ -144,7 +144,7 @@ window.WhiteboardUi = {
 		WhiteboardUi.getElement('button_zoomout').mousedown(Whiteboard.zoomout);
 		WhiteboardUi.getElement('button_zoom').mousedown(WhiteboardUi.zoomBar);
 		WhiteboardUi.getElement('button_rotate').mousedown(function() {
-			var rot = parseInt(WhiteboardUi.getElement('input_rotation').attr("value"));
+		    var rot = parseInt(WhiteboardUi.getElement('input_rotation').attr("value"), 10);
 			if (rot >= -360 && rot <= 360) {
 				Whiteboard.rotate(rot);
 			} else {
@@ -247,7 +247,7 @@ window.WhiteboardUi = {
 	beginPencilDraw: function(event) {
 	    Whiteboard.beginPencilDraw(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
 	    WhiteboardUi.canvasElement.bind("mousemove", function(event) {
-	    	Whiteboard.pencilDraw(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
+	        Whiteboard.pencilDraw(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
 	    });
 	    WhiteboardUi.canvasElement.bind("mouseup", WhiteboardUi.endPencilDraw);
 	    WhiteboardUi.canvasElement.bind("mouseout", WhiteboardUi.endPencilDraw);
@@ -291,7 +291,7 @@ window.WhiteboardUi = {
 	beginErasing: function(event) {
 	    Whiteboard.beginErasing(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
 	    WhiteboardUi.canvasElement.bind("mousemove", function(event) {
-	    	Whiteboard.erasePoint(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
+	        Whiteboard.erasePoint(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
 	    });
 	    WhiteboardUi.canvasElement.bind("mouseup", WhiteboardUi.endErasing);
 	    WhiteboardUi.canvasElement.bind("mouseout", WhiteboardUi.endErasing);
@@ -358,8 +358,8 @@ window.WhiteboardUi = {
 				var amount = WhiteboardUi.getElement('zoom_amount');
 				var ey = event.clientY;
 				var px = zoomSec.height() - slider.height() - $(this).position().top;
-				var zoom = 2 * px / height
-				WhiteboardUi.getElement('zoom_amount').html(parseInt(100 * zoom) + "%");
+				var zoom = 2 * px / height;
+				WhiteboardUi.getElement('zoom_amount').html(parseInt(100 * zoom, 10) + "%");
 			},
 			stop: function(event, ui) {
 				WhiteboardUi.performZoom();
@@ -374,7 +374,7 @@ window.WhiteboardUi = {
 	 * this action
 	 */
 	performZoom: function(event) {
-		var zoom = parseInt(WhiteboardUi.getElement('zoom_amount').html()) / 100;
+		var zoom = parseInt(WhiteboardUi.getElement('zoom_amount').html(), 10) / 100;
 		
 		var rel = (1 + zoom) / WhiteboardUi.zoomrel;
 		Whiteboard.zoom(rel);
@@ -437,7 +437,7 @@ window.WhiteboardUi = {
 	beginRectangle: function(event) {
 		Whiteboard.beginShape(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
 	    WhiteboardUi.canvasElement.bind("mousemove", function(event) {
-	    	Whiteboard.drawRectangle(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
+	        Whiteboard.drawRectangle(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
 	    });
 		WhiteboardUi.canvasElement.bind("mouseup", WhiteboardUi.endRectangle);
 	},
@@ -480,7 +480,7 @@ window.WhiteboardUi = {
 	beginOval: function(event) {
 		Whiteboard.beginShape(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
 	    WhiteboardUi.canvasElement.bind("mousemove", function(event) {
-	    	Whiteboard.drawOval(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
+	        Whiteboard.drawOval(WhiteboardUi.getX(event), WhiteboardUi.getY(event));
 	    });
 	    WhiteboardUi.canvasElement.bind("mouseup", WhiteboardUi.endOval);
 	},
@@ -527,9 +527,9 @@ window.WhiteboardUi = {
 				menu.css('opacity', '1');
 			});
 		}
-	},
+	}
 	
-}
+};
 
 
 /**
