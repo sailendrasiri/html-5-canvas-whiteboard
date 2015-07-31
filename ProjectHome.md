@@ -1,0 +1,3 @@
+This project aims to develop a whiteboard application with the help of html 5 canvas. It will consist of only static html, css and javascript files and is made mainly as a proof-of-concept to work at least in the newest firefox(current 3.5.7) and google chrome(current 4.0) browser.
+
+The Whiteboard application provides simple functionality to draw and to move from the beginning of the drawing to the end and in this way also animating the drawing. The application is supposed to be built with an MVC-architecture so that the view should be simple to modify and the model easily saved or shared if needed.
